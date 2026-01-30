@@ -1,0 +1,41 @@
+{
+  "name": "@meuuhdia/video-player",
+  "version": "1.0.0",
+  "description": "inclusive video player",
+  "type": "module",
+  "main": "meuuhdia.js",
+  "author": "Séverine Féret",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./meuuhdia.js"
+  },
+  "files": [
+    "meuuhdia-css.js",
+    "meuuhdia.js",
+    "locale",
+    "modules",
+    "icons.js"
+  ],
+  "scripts": {
+    "build": "node buildMeuuhdiaStyles",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meuuhdia/video-player.git"
+  },
+  "keywords": [
+    "video",
+    "player",
+    "media",
+    "accessibility",
+    "a11y"
+  ],
+  "homepage": "https://github.com/Meuuhdia/video-player#readme",
+  "bugs": {
+    "url": "https://github.com/Meuuhdia/video-player/issues"
+  },
+  "devDependencies": {
+    "sass": "^1.80.7"
+  }
+}

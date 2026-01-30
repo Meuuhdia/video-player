@@ -1,0 +1,96 @@
+@use "../base/variables" as *;
+
+.meuuhdia {
+    .meuuhdia_controls {
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        width: 100%;
+
+        input,
+        button {
+
+            &:focus,
+            &:hover {
+                outline: 2px dashed $meuuhdia-color-main;
+            }
+        }
+
+        input {
+            outline-offset: calc(0.2em * 0.6);
+        }
+
+        button {
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+            padding: calc(0.5em * 0.6);
+            margin: calc(0.7em * 0.6) calc(0.5em * 0.6) calc(0.3em * 0.6);
+
+            svg {
+                display: block;
+                height: calc(2em * 0.6);
+                width: auto;
+            }
+
+            .meuuhdia_icon-path {
+                fill: $meuuhdia-color-main;
+            }
+
+            &:disabled {
+                opacity: 0.7;
+            }
+        }
+
+        .meuuhdia_mute {
+            background-color: $meuuhdia-color-secondary;
+            color: $meuuhdia-color-main;
+
+            .meuuhdia_icon-path {
+                fill: $meuuhdia-color-main;
+            }
+        }
+
+        .meuuhdia_mute[aria-pressed="true"] {
+            border-bottom-color: $meuuhdia-color-main;
+        }
+
+        .meuuhdia_progress {
+            display: flex;
+            flex-direction: column;
+            row-gap: calc(0.3em * 0.6);
+            flex: 1;
+            font-size: calc(1.4em * 0.6);
+            margin: calc(0.5em * 0.6);
+            text-align: right;
+            width: 100%;
+
+            label {
+                display: inline-flex;
+                justify-content: flex-end;                
+            }
+        }
+    }
+
+    .meuuhdia_hide_controls {
+        .meuuhdia_controls {
+            height: 0;
+            overflow: hidden;
+        }
+    }
+
+    // @media (max-width: 400px) {
+    //     .meuuhdia_progress {
+    //         label {
+    //             position: absolute;
+    //             left: 0;
+    //             bottom: 100%;
+    //             padding: calc(1em * 0.6);
+    //             background-color: $meuuhdia-color-main;
+    //         }
+    //     }
+    // }
+}

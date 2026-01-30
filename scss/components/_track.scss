@@ -1,0 +1,129 @@
+@use "../base/variables" as *;
+
+.meuuhdia_caption_container {
+    position: absolute;
+    bottom: calc(6em * 0.6);
+    left: 1%;
+    right: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: transparent;
+    color: #FFFFFF;
+
+    * {
+        background-color: transparent;
+        color: unset;
+    }
+
+    @media (max-width: 400px) {
+        bottom: calc(4.5em * 0.6);
+    }
+
+    .meuuhdia_caption_cue {
+        display: inline-flex;
+        flex-direction: column;
+        align-self: center;
+        padding: calc(0.5em * 0.6);
+        margin: 0;
+        width: fit-content;
+        font: $meuuhdia-cue-fontweight $meuuhdia-cue-fontsize $meuuhdia-font-family;
+        font-size: $meuuhdia-cue-fontsize;
+
+        .off {
+            font-style: italic;
+        }
+
+        .group {
+            text-transform: uppercase;
+            font-size: 85%;
+        }
+
+        .numeric::before {
+            content: "*";
+        }
+
+        .music {
+            &::before,
+            &::after {
+                content: "\266A";
+            }
+        }        
+
+        .whisp {
+            &::before {
+                content: "( ";
+            }
+
+            &::after {
+                content: " )";
+            }
+        }
+
+        &[data-align="start"] {
+            align-self: flex-start;
+        }
+
+        &[data-align="end"] {
+            align-self: flex-end;
+        }
+    }
+
+    &:not(.meuuhdia_custom_colors) {
+        &:not(.meuuhdia_caption_cue--fill) .meuuhdia_caption_cue {
+            text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+        }
+
+        &.meuuhdia_caption_cue--fill .meuuhdia_caption_cue {
+            background: #000;
+        }
+
+        .meuuhdia_caption_cue {
+            .off {
+                color: #e9e955;
+            }
+    
+            .sound,
+            .numeric {
+                color: #ff5f5f;
+            }
+
+            .think {
+                color: #25c5c5;
+            }
+    
+            .music {
+                color: #ff28ff;
+            }
+    
+            span[lang] {
+                color: #28c928;
+            }
+        }
+    }
+
+    &:has(.align-top) {
+        bottom: unset;
+        top: 0;
+    }
+}
+
+.meuuhdia_caption_container.meuuhdia_custom_colors {
+    .meuuhdia_caption_cue {
+        color: $meuuhdia-cue-color;       
+    }
+
+    &:not(.meuuhdia_caption_cue--fill) .meuuhdia_caption_cue {
+        text-shadow: 2px 0 $meuuhdia-cue-bgcolor, -2px 0 $meuuhdia-cue-bgcolor, 0 2px $meuuhdia-cue-bgcolor, 0 -2px $meuuhdia-cue-bgcolor, 1px 1px $meuuhdia-cue-bgcolor, -1px -1px $meuuhdia-cue-bgcolor, 1px -1px $meuuhdia-cue-bgcolor, -1px 1px $meuuhdia-cue-bgcolor;
+    }
+
+    &.meuuhdia_caption_cue--fill .meuuhdia_caption_cue {
+        background: $meuuhdia-cue-bgcolor;
+    }
+}
+
+.meuuhdia_hide_controls {
+    .meuuhdia_caption_container:not([data-line="1"]) {
+        bottom: 0;
+    }
+}

@@ -1,0 +1,45 @@
+@use "../base/variables" as *;
+
+.meuuhdia {
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    &:not(.meuuhdia--row) {
+        flex-direction: column;        
+    }
+
+    &[data-fullscreen="true"] {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .meuuhdia_wrapper {
+        position: relative;
+        max-width: 100%;
+        font-family: consolas;
+
+        .meuuhdia_video {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }        
+    }
+
+    &[data-fullscreen="true"] {
+        .meuuhdia_wrapper {
+            .meuuhdia_controls {
+                position: fixed;
+            }
+
+            .meuuhdia_caption_container {
+                bottom: 0;
+            }
+        }
+
+        .meuuhdia_transcription {
+            display: none;
+        }
+    }
+}

@@ -1,0 +1,7 @@
+_save
+.vscode
+example
+icons
+node_modules
+scss
+*.tgz

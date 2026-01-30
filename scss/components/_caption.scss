@@ -1,0 +1,100 @@
+@use "../base/variables" as *;
+
+/**
+ * ? Caption disclosure
+ */
+.meuuhdia_caption {
+    .meuuhdia_caption_content {
+        font-size: calc(1.3em * 0.6);
+        padding: calc(0.5em * 0.6);
+        width: max-content;
+        background-color: $meuuhdia-color-main;
+        color: $meuuhdia-color-secondary;
+        border-color: $meuuhdia-color-secondary;
+        overflow-y: scroll;
+        max-height: 250px;
+    
+        details {
+            display: list-item;
+            background-color: $meuuhdia-color-secondary;
+            color: $meuuhdia-color-main;
+    
+            summary {
+                display: list-item;
+                cursor: pointer;
+                background-color: $meuuhdia-color-main;
+                color: $meuuhdia-color-secondary;
+                border-bottom: 1px solid $meuuhdia-color-secondary;
+                padding: calc(0.5em * 0.6);
+            }
+    
+            .meuuhdia_caption_sublist {
+                border-top: 1px solid $meuuhdia-color-main;
+    
+                button {
+                    display: inline-flex;
+                    align-items: baseline;
+                    column-gap: calc(0.5em * 0.6);
+                    width: 100%;
+                    width: -moz-available;
+                    width: -webkit-fill-available;
+                    width: fill-available;
+    
+                    &::before {
+                        content: "";
+                        width: calc(1em * 0.6);
+                        height: calc(1em * 0.6);
+                        border-radius: 50%;
+                        flex: 0 0 auto;
+                    }
+    
+                    &[aria-pressed="true"]::before {
+                        background-color: $meuuhdia-color-main;
+                        color: $meuuhdia-color-secondary;
+                    }
+                }
+            }
+    
+            .meuuhdia_customize_options {
+                li {
+                    display: flex;
+                    justify-content: space-between;
+                    column-gap: calc(1em * 0.6);
+                    align-items: center;
+                    padding: calc(0.5em * 0.6);
+    
+                    label,
+                    input,
+                    select {
+                        cursor: pointer;
+                    }
+
+                    label {
+                        text-transform: capitalize;
+                        width: 30%;
+                    }
+                    
+                    input,
+                    select {
+                        width: 70%;
+                    }
+    
+                    &:has(> input[disabled]) {
+                        opacity: .7;
+                        pointer-events: none;
+                    }
+                }
+            }
+    
+            p {
+                font-weight: 700;
+                margin: calc(0.2em * 0.6);
+            }
+    
+            button {
+                background-color: $meuuhdia-color-secondary;
+                color: $meuuhdia-color-main;
+            }
+        }
+    }
+}

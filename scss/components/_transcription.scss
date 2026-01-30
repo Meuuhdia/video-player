@@ -1,0 +1,77 @@
+.meuuhdia_transcription {
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    padding: 1em;
+    margin-bottom: 1em;
+    box-sizing: border-box;
+    width: 100%;
+    flex: 1;
+
+    &_heading {
+        display: flex;
+        // flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1em;        
+        margin: 0;        
+        
+        &:has(+ .meuuhdia_transcription_container) {
+            padding-bottom: 0.5em;
+            border-bottom: 1px solid currentColor;
+        }
+
+        &_lang {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+            align-items: baseline;
+
+            label {
+                flex: 1;
+            }
+            
+            select {
+                padding: 0.5em;
+                border-color: currentColor;
+                border-radius: 3px;
+            }
+        }
+
+        &_side {
+            display: inline-flex;
+            gap: 0.5em;
+
+            button {
+                border: 0;
+                border-bottom: 2px solid transparent;
+                color: currentColor;
+                display: inline-block;
+                padding: calc(0.5em * 0.6);
+                margin: calc(0.7em * 0.6) calc(0.5em * 0.6) calc(0.3em * 0.6);
+
+                svg {
+                    display: block;
+                    height: calc(2em * 0.6);
+                    width: auto;
+                }
+
+                .meuuhdia_icon-path {
+                    fill: currentColor;
+                }
+            }
+        }
+    }
+
+    &_container {
+        max-height: 50vh;
+        overflow-y: scroll;
+
+        .meuuhdia_transcription_info {
+            display: block;
+            margin: 1em 0.5em 0.5em;
+            font-size: smaller;
+            text-decoration: underline;
+            border: none;
+        }
+    }
+}

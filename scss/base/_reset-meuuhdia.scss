@@ -1,0 +1,93 @@
+@use "../base/variables" as *;
+
+.meuuhdia:has( video > source) {
+    margin: 0;
+
+    .meuuhdia_wrapper,
+    .meuuhdia_transcription {
+        background: $meuuhdia-color-secondary;
+        color: $meuuhdia-color-main;
+    }
+
+    .meuuhdia_video {
+        display: inline-block;
+        vertical-align: baseline;
+    }
+
+    p:not(.meuuhdia_caption_cue),
+    ul,
+    ol,
+    li,
+    button,
+    label,
+    input,
+    details,
+    summary,
+    fieldset,
+    legend,
+    select,
+    option {        
+        appearance: auto;
+        width: auto;
+        margin: 0;
+        padding: 0;
+        background: $meuuhdia-color-secondary;
+        color: $meuuhdia-color-main;
+        border-color: $meuuhdia-color-main;
+        border-width: 0;
+        border-radius: 0;       
+        text-transform: none;
+    }
+
+    div {
+        width: 100%;
+    }
+
+    details,
+    summary,
+    fieldset {
+        display: block;
+    }
+
+    button,
+    input,
+    select {
+        display: inline-block;
+        line-height: normal;
+        font: inherit;
+
+        &[disabled] {
+            cursor: default;
+        }
+
+        &::-moz-focus-inner {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    select,
+    fieldset,
+    input[type="color"] {
+        margin: 0.2em;
+        padding: 0.2em;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 1px;
+    }
+
+    button {
+        overflow: visible;
+        -webkit-appearance: button;
+        appearance: button;
+        cursor: pointer;
+    }
+
+    input {
+        line-height: normal;
+
+        &[type="color"] {
+            height: 3em;
+        }
+    }
+}

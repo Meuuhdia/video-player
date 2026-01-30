@@ -1,0 +1,52 @@
+@use "../base/variables" as *;
+
+@mixin horizontal_track {
+    border: 0;
+    height: calc(1em * 0.6);
+    border-radius: calc(0.2em * 0.6);
+    background-color: $meuuhdia-color-main;
+}
+
+@mixin horizontal_thumb {
+    appearance: none;
+    background-color: $meuuhdia-color-secondary;
+    border: 2px solid $meuuhdia-color-main;
+    width: calc(1em * 0.6);
+    height: calc(3em * 0.6);
+    border-radius: 10%;
+
+    @media (max-width: 400px) {
+        height: calc(1.2em * 0.6);
+    }
+}
+
+.meuuhdia {
+    .meuuhdia_range_horizontal {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+        width: 100%;
+        height: calc(3em * 0.6);
+
+        //? track
+        &::-webkit-slider-runnable-track {
+            @include horizontal_track;
+        }
+
+        &::-moz-range-track {
+            @include horizontal_track;
+        }
+
+        //? thumb
+        &::-webkit-slider-thumb {
+            margin-top: -0.6em;
+            @include horizontal_thumb;            
+        }
+
+        &::-moz-range-thumb {
+            @include horizontal_thumb;
+        }
+    }
+}
