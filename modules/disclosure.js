@@ -21,7 +21,7 @@ export let meuuhdiaDisclosure = {
      * @returns {Node} <li> element
      */
     createDisclosure: function(actionName, actionIconName, actionLabel, contentNodes, iconLabel = null) {
-        let index = document.querySelectorAll("meuuhdia_disclosure").length + 1;
+        let index = document.querySelectorAll(".meuuhdia_disclosure").length + 1;
 
         /**
          * ? Action
