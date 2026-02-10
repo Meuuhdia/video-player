@@ -66,6 +66,8 @@ class MeuuhdiaControls {
 
         this.controls.appendChild(fullscreen);
         this.#actionAddEventListeners();
+        this.#setVolumeIcon();
+        if(this.video.hasAttribute("autoplay")) this.#setIconPlayPause(true);
     }
 
     #actionAddEventListeners() {
@@ -102,20 +104,28 @@ class MeuuhdiaControls {
     }
 
     #actionPlayPause() {
-        let play = this.controls.querySelector(".meuuhdia_playpause");
-        let icon = play.querySelector("svg");
-        let label = play.querySelector(".sr-only");
-
         if (this.video.paused || this.video.ended) {
             this.video.play();
-            play.replaceChild(MeuuhdiaIcon.createIcon("pause"), icon);
-            label.textContent = "pause";
             this.#toggleControls();
         } else {
             clearTimeout(this.controlsTimeout);
             this.video.pause();
+        }
+
+        this.#setIconPlayPause();
+    }
+
+    #setIconPlayPause($autoplay = false) {
+        let play = this.controls.querySelector(".meuuhdia_playpause");
+        let icon = play.querySelector("svg");
+        let label = play.querySelector(".sr-only");
+
+        if (!$autoplay & (this.video.paused || this.video.ended)) {
             play.replaceChild(MeuuhdiaIcon.createIcon("play"), icon);
-            label.textContent = "lecture";
+            label.textContent = "lecture";            
+        } else {
+            play.replaceChild(MeuuhdiaIcon.createIcon("pause"), icon);
+            label.textContent = "pause";
         }
     }
 
