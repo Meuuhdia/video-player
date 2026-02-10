@@ -1,6 +1,6 @@
 {
   "name": "@meuuhdia/video-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "inclusive video player",
   "type": "module",
   "main": "meuuhdia.js",
