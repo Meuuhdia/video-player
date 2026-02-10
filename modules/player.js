@@ -1,5 +1,7 @@
 import { MeuuhdiaControls } from "./controls.js";
-import { locale } from "../locale/fr.js";
+import { locale as locale_en } from "../locale/en.js";
+import { locale as locale_fr } from "../locale/fr.js";
+import { locale as locale_it } from "../locale/it.js";
 
 class MeuuhdiaPlayer {
     /**
@@ -43,8 +45,21 @@ class MeuuhdiaPlayer {
      * @param {Node} meuuhdia 
      */
     constructor(meuuhdia) {
+        let inherit_locale = meuuhdia.closest("[lang]") ? meuuhdia.closest("[lang]").getAttribute("lang").split("-")[0] : "en";
+        let current_locale = meuuhdia.dataset.locale ?? inherit_locale;
+
+        switch(current_locale) {
+            case "fr":
+                this.locale = locale_fr;
+                break;
+            case "it":
+                this.locale = locale_it;
+                break;
+            default:
+                this.locale = locale_en;
+        }
+
         this.meuuhdia = meuuhdia;
-        this.locale = locale;
     }
 
     /**
@@ -72,7 +87,15 @@ class MeuuhdiaPlayer {
         this.wrapper.setAttribute("lang", this.locale.code);
 
         this.video = this.meuuhdia.querySelector("video");
-        this.video.querySelectorAll("track").forEach(track => track.id = track.getAttribute("kind") + "_" + track.getAttribute("srclang"));
+        this.video.querySelectorAll("track").forEach(track => {
+            const allowed_types = ["captions", "subtitles", "descriptions"];
+            var current_type = track.getAttribute("kind");
+            var extension = track.getAttribute("src")?.split(".").pop();
+
+            if(allowed_types.includes(current_type) && ("descriptions" != current_type || "json" == extension)) {
+                track.id = current_type + "_" + track.getAttribute("srclang");
+            } else track.remove();            
+        });
         
         let Controls = new MeuuhdiaControls(this.locale, this.wrapper, this.video);
         this.controls = Controls.controls;

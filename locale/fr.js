@@ -4,7 +4,7 @@ export const locale = {
         play: "lecture",
         pause: "pause",
         mute: "désactiver le son",
-        progress: "Duréee",
+        progress: "Durée",
         volume: "volume",
         voldec: "Baisser le volume",
         volinc: "Monter le volume",

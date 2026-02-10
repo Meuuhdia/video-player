@@ -1,29 +1,32 @@
 # Meuuhdia
 
-Lecteur video inclusif embarquant les options de contrôle classiques.
-Vous pouvez renseigner des fichiers de traduction, sous-titrage et transcription textuelle.
+- [documentation en français](/README.fr.md)
+- [documentazione in italiano](/README.it.md)
 
-Le lecteur permettra à l'utilisateur d'activer et configurer lui même l'affichage de ces fichiers.
-Il pourra modifier les couleurs et taille des sous-titres à sa convenance.
+Inclusive video player with standard control options.
+You can provide translation files, subtitles, and text transcription.
 
-Ce lecteur a été conçu en ayant à coeur de créer un outil inclusif.
-Toutefois, il n'a fait l'objet d'aucun audit, il y a donc certainement des choses a améliorer. Tous les retours sont les bienvenus.
+The player allows users to enable and configure the display of these files themselves.
+They can customize the colors and size of subtitles to their preferences.
+
+This player was designed with a commitment to creating an inclusive tool.
+However, it has not undergone any accessibility audit, so there are certainly areas for improvement. All feedback is welcome.
 
 ## Installation
-1. Installer le lecteur avec NPM : `npm install @meuuhdia/video-player`
-2. Activer le lecteur en ajoutant le code suivant dans votre fichier javascript principal (ou bien à l'endroit précis ou vous en avez besoin) :
+1. Install the player with NPM: `npm install @meuuhdia/video-player`
+2. Enable the player by adding the following code to your main JavaScript file (or wherever you need it):
 ```js
-// sans empaqueteur JS
+// without JS bundler
 import "/node_modules/@meuuhdia/video-player/meuuhdia.js";
 
-// avec empaqueteur JS
+// with JS bundler
 import "@meuuhdia/video-player";
 ```
 
-## Personnalisation
-Vous pouvez mettre à jour les variables CSS Meuuhdia pour adapter les couleurs à votre design.
+## Customization
+You can update Meuuhdia CSS variables to adapt the colors to your design.
 
-### Couleurs et police du lecteur
+### Player colors and font
 ```css
 :root {
     --meuuhdia-color-main: #000000;
@@ -32,7 +35,7 @@ Vous pouvez mettre à jour les variables CSS Meuuhdia pour adapter les couleurs 
 }
 ```
 
-### Couleurs par défaut des sous-titres
+### Default subtitle colors
 ```css
 :root {
     --meuuhdia-cue-color: #ffff00;
@@ -40,11 +43,11 @@ Vous pouvez mettre à jour les variables CSS Meuuhdia pour adapter les couleurs 
 }
 ```
 
-## Utilisation
-Copiez le code suivant à l'endroit ou vous souhaitez afficher le lecteur vidéo, il s'agit du code minimal nécessaire au fonctionnement de Meuuhdia.
-- L'attribut "controls" permet de s'assurer d'avoir les options de contrôle disponibles dans le cas ou le lecteur natif serait affiché (javascript désactivé).
-- L'attribut `[preload='metadata']` permet au lecteur Meuuhdia de charger la vidéo
-- Au moins une balise `<source>` doit être renseignée
+## Usage
+Copy the following code where you want to display the video player. This is the minimum code required for Meuuhdia to work.
+- The "controls" attribute ensures control options are available if the native player is displayed (JavaScript disabled).
+- The `[preload='metadata']` attribute allows the Meuuhdia player to load the video
+- At least one `<source>` tag must be provided
 
 ```html
 <div class="meuuhdia">
@@ -56,57 +59,57 @@ Copiez le code suivant à l'endroit ou vous souhaitez afficher le lecteur vidéo
 </div>
 ```
 
-### Sous-titres et traductions
-Les fichiers vtt renseignés ne doivent pas contenir de styles css, Meuuhdia applique deja des styles adaptés pour que tout le monde puisse les lire correctement et les adapter à ses besoins.
+### Subtitles and translations
+VTT files provided should not contain CSS styles. Meuuhdia already applies appropriate styles so everyone can read them correctly and adapt them to their needs.
 
-#### Traduction
-Pour fournir une traduction de la video l'attribut kind doit avoir la valeur "subtitles".
+#### Translation
+To provide a translation of the video, the kind attribute must have the value "subtitles".
 
-Exemple:
+Example:
 ```html
 <track kind="subtitles" src="path/to/your/subtitles.en.vtt" srclang="en" lang="en" label="English" />
 ```
 
-#### Sous-titre
-Pour fournir un sous-titrage de la video l'attribut kind doit avoir la valeur "captions".
-Un sous-titrage correct doit permettre de comprendre tout ce qu'il se passe dans la vidéo avec le son coupé, par exemple si une personne réagit à un bruit, ce bruit doit être retranscrit dans les sous-titres.
+#### Captions
+To provide captions for the video, the kind attribute must have the value "captions".
+Proper captions should allow understanding everything happening in the video with the sound off. For example, if a person reacts to a noise, that noise should be transcribed in the captions.
 
-Exemple:
+Example:
 ```html
 <track kind="captions" src="path/to/your/captions.fr.vtt" srclang="fr" label="Français" />
 ```
 
-Pour un sous-titrage de qualité, 3 règles de base:
-- Maximum 2 lignes de 40 caractères par image
-- Afficher pendant minimum 600ms
-- Minimum 160 ms entre 2 sous-titrages
+For quality captions, 3 basic rules:
+- Maximum 2 lines of 40 characters per frame
+- Display for a minimum of 600ms
+- Minimum 160ms between 2 captions
 
-Pour bénéficier de l'ensemble des fonctionnalités du lecteur, voici les différentes options de balisage et propriétés disponibles pour vos fichiers VTT:
-- <v Fanch> : locuteur à l'écran (blanc)
-    - <v.whisp Fanch> : chuchote ou aparté (parenthèses)
-    - <v.group> : phrase dite par plusieurs locuteurs (majuscule)
-- <v.off> : locuteur hors champ ou voix off (jaune, italique)
-- <c.sound> : effet sonore non induit par l'image (rouge)
-    - <c.numeric> : effet sonore provenant d'un téléphone, tv... (asterisque)
-- <c.think Narrateur> : pensée du personnage ou narration (cyan)
-- <c.music> : indication musicale, paroles de chanson (magenta)
-- <lang Breton> : indication de langue étrangère (vert)
-- 00:10.360 --> 00:13.900 align: start/end (droite/gauche)
-- 00:10.360 --> 00:13.900 line: 1 (haut)
+To benefit from all player features, here are the different markup options and properties available for your VTT files:
+- <v John>: on-screen speaker (white)
+    - <v.whisp John>: whisper or aside (parentheses)
+    - <v.group>: sentence spoken by multiple speakers (uppercase)
+- <v.off>: off-screen speaker or voiceover (yellow, italic)
+- <c.sound>: sound effect not induced by the image (red)
+    - <c.numeric>: sound effect from a phone, TV... (asterisk)
+- <c.think Narrator>: character's thought or narration (cyan)
+- <c.music>: musical indication, song lyrics (magenta)
+- <lang Danish>: foreign language indication (green)
+- 00:10.360 --> 00:13.900 align: start/end (right/left)
+- 00:10.360 --> 00:13.900 line: 1 (top)
 
-### Transcription textuelle
-Pour fournir une transcription textuelle de la video l'attribut kind doit avoir la valeur "descriptions".
+### Text transcription
+To provide a text transcription of the video, the kind attribute must have the value "descriptions".
 
-Le fichier fourni doit être un fichier JSON contenant une liste de clé/valeur permettant d'afficher la transcription sous forme de liste ordonnée (ex: {"00:10 Clara": "Salut Toto !", "00:13 Toto": "Hey Clara, comment vas-tu ?"})
+The provided file must be a JSON file containing a list of key/value pairs to display the transcription as an ordered list (e.g., {"00:10 Clara": "Hi Toto!", "00:13 Toto": "Hey Clara, how are you?"})
 
-Une transcription correcte doit permettre de comprendre tout ce qu'il se passe dans la vidéo uniquement à la lecture du texte.
+A proper transcription should allow understanding everything happening in the video from reading the text alone.
 
-Exemple:
+Example:
 ```html
 <track kind="descriptions" src="path/to/your/transcript.it.json" srclang="it" label="italiano" />
 ```
 
-### Exemple complet
+### Complete example
 ```html
 <div class="meuuhdia">
     <div class="meuuhdia_wrapper">
