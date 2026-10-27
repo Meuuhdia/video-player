@@ -5,7 +5,7 @@
   "type": "module",
   "main": "meuuhdia.js",
   "author": "Séverine Féret",
-  "license": "AGPL-3.0-or-later",
+  "license": "GPL-2.0-or-later",
   "exports": {
     ".": "./meuuhdia.js"
   },
