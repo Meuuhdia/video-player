@@ -40,6 +40,12 @@ class MeuuhdiaPlayer {
     controls;
 
     /**
+     * ? Standard and audio described <source> elements
+     * @type {{standard: Array<Node>, described: Array<Node>}}
+     */
+    sources = { standard: [], described: [] };
+
+    /**
      * ? MeuuhdiaPlayer constructor
      * 
      * @param {Node} meuuhdia 
@@ -68,6 +74,7 @@ class MeuuhdiaPlayer {
      */
     initPlayer() {
         let video_origin = this.meuuhdia ? this.meuuhdia.querySelector("video") : null;
+        if(video_origin && !this.meuuhdiaIsInit) this.#extractDescribedSources(video_origin);
 
         if(MeuuhdiaPlayer.#supportsVideo && video_origin && 0 < video_origin.querySelectorAll("source").length) {
             if(video_origin.readyState) {
@@ -97,13 +104,34 @@ class MeuuhdiaPlayer {
             } else track.remove();            
         });
         
-        let Controls = new MeuuhdiaControls(this.locale, this.wrapper, this.video);
+        let Controls = new MeuuhdiaControls(this.locale, this.wrapper, this.video, this.sources);
         this.controls = Controls.controls;
         
         this.wrapper.appendChild(this.controls);
 
         this.meuuhdiaIsInit = true;
         this.#displayPlayer();
+    }
+
+    /**
+     * ? Set aside audio described sources (<source data-audiodescription>)
+     * They are swapped in by the audio description button
+     * @private
+     * @param {Node} video
+     * @returns {void}
+     */
+    #extractDescribedSources(video) {
+        let described = Array.from(video.querySelectorAll("source[data-audiodescription]"));
+        if(!described.length) return;
+
+        let playingDescribed = described.some(source => source.src === video.currentSrc);
+        described.forEach(source => source.remove());
+
+        this.sources.described = described;
+        this.sources.standard = Array.from(video.querySelectorAll("source"));
+
+        // the browser may already have picked a described source: reload with standard ones
+        if(playingDescribed && this.sources.standard.length) video.load();
     }
 
     #displayPlayer() {

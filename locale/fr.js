@@ -9,7 +9,8 @@ export const locale = {
         voldec: "Baisser le volume",
         volinc: "Monter le volume",
         caption: "Sous titrages et traductions",
-        fullscreen: "Plein écran"
+        fullscreen: "Plein écran",
+        audiodescription: "Audiodescription"
     },
     datetime: {
         hour: {sing: "heure", plur: "heures"},

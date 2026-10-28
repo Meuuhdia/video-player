@@ -109,12 +109,24 @@ Example:
 <track kind="descriptions" src="path/to/your/transcript.it.json" srclang="it" label="italiano" />
 ```
 
+### Audio description
+If you have a version of the video with built-in audio description, add it with a `<source>` element carrying the `data-audiodescription` attribute, placed after the regular sources.
+
+The player then displays an "Audio description" button to switch between both versions while keeping the playback position and state. Both versions must have the same duration and timing so captions stay in sync.
+
+Example:
+```html
+<source src="path/to/your/video.mp4" type="video/mp4">
+<source src="path/to/your/video-ad.mp4" type="video/mp4" data-audiodescription>
+```
+
 ### Complete example
 ```html
 <div class="meuuhdia">
     <div class="meuuhdia_wrapper">
         <video poster="assets/poster.png" preload="metadata" controls disablePictureInPicture>
             <source src="assets/extrait.mp4" type="video/mp4">
+            <source src="assets/extrait-ad.mp4" type="video/mp4" data-audiodescription>
 
             <track kind="subtitles" src="assets/subtitles.en.vtt" srclang="en" lang="en" label="English" />
 

@@ -109,12 +109,24 @@ Exemple:
 <track kind="descriptions" src="path/to/your/transcript.it.json" srclang="it" label="italiano" />
 ```
 
+### Audiodescription
+Si vous disposez d'une version de la vidéo intégrant l'audiodescription, ajoutez-la avec une balise `<source>` portant l'attribut `data-audiodescription`, placée après les sources classiques.
+
+Le lecteur affiche alors un bouton « Audiodescription » permettant de passer d'une version à l'autre en conservant la position et l'état de lecture. Les deux versions doivent avoir la même durée et le même minutage pour que les sous-titres restent synchronisés.
+
+Exemple:
+```html
+<source src="path/to/your/video.mp4" type="video/mp4">
+<source src="path/to/your/video-ad.mp4" type="video/mp4" data-audiodescription>
+```
+
 ### Exemple complet
 ```html
 <div class="meuuhdia">
     <div class="meuuhdia_wrapper">
         <video poster="assets/poster.png" preload="metadata" controls disablePictureInPicture>
             <source src="assets/extrait.mp4" type="video/mp4">
+            <source src="assets/extrait-ad.mp4" type="video/mp4" data-audiodescription>
 
             <track kind="subtitles" src="assets/subtitles.en.vtt" srclang="en" lang="en" label="English" />
 

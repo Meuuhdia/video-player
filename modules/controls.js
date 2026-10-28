@@ -30,16 +30,23 @@ class MeuuhdiaControls {
     controlsTimeout;
 
     /**
+     * @type {{standard: Array<Node>, described: Array<Node>}}
+     */
+    sources;
+
+    /**
      * ? MeuuhdiaControls constructor
      * 
      * @param {Object} locale 
      * @param {Node} wrapper 
      * @param {Node} video 
+     * @param {Object} sources standard and audio described <source> elements
      */
-    constructor(locale, wrapper, video) {
+    constructor(locale, wrapper, video, sources = { standard: [], described: [] }) {
         this.locale = locale;
         this.wrapper = wrapper;
         this.video = video;
+        this.sources = sources;
 
         this.#initControls();
     }
@@ -52,7 +59,7 @@ class MeuuhdiaControls {
         let progress = this.#createProgressDuration();
         let volume = this.#createProgressVolume();
         let fullscreen = this.#createButton("meuuhdia_fs", MeuuhdiaIcon.createIcon("expand"), this.locale.controls.fullscreen);
-        fullscreen.setAttribute("aria-pressed", "false");
+        fullscreen.querySelector("button").setAttribute("aria-pressed", "false");
 
         this.controls.appendChild(play);
         this.controls.appendChild(progress);
@@ -62,6 +69,14 @@ class MeuuhdiaControls {
             let Caption = new MeuuhdiaCaption(this.locale, this.wrapper, this.video, this.controls);
             this.wrapper.appendChild(Caption.createCaptionContainer());
             this.controls.appendChild(Caption.createCaption(this.video.textTracks));            
+        }
+
+        if(0 < this.sources.described.length) {
+            let audiodescription = this.#createButton("meuuhdia_ad", MeuuhdiaIcon.createIcon("audiodescription_off", this.locale.words.disabled), this.locale.controls.audiodescription);
+            let audiodescription_btn = audiodescription.querySelector("button");
+            audiodescription_btn.setAttribute("aria-pressed", "false");
+            audiodescription_btn.addEventListener("click", this.#switchAudioDescription.bind(this));
+            this.controls.appendChild(audiodescription);
         }
 
         this.controls.appendChild(fullscreen);
@@ -300,6 +315,14 @@ class MeuuhdiaControls {
         
         this.video.addEventListener("loadedmetadata", () => progress.setAttribute("max", this.video.duration));
 
+        // the duration may change when switching to the audio described version
+        this.video.addEventListener("durationchange", () => {
+            if(!this.video.duration) return;
+            progress.setAttribute("max", this.video.duration);
+            timetotal_el.replaceChildren();
+            MeuuhdiaTime.populateTimeNode(this.locale, timetotal_el, this.video.duration);
+        });
+
         this.video.addEventListener("timeupdate", () => {
             if (!progress.hasAttribute("max")) progress.setAttribute("max", this.video.duration);
 
@@ -319,6 +342,42 @@ class MeuuhdiaControls {
         } else {
             this.wrapper.closest(".meuuhdia").requestFullscreen();
         }
+    }
+
+    /**
+     * ? Swap between standard and audio described sources, keeping position and playback state
+     */
+    #switchAudioDescription() {
+        let btn = this.controls.querySelector(".meuuhdia_ad");
+        let enable = "true" !== btn.getAttribute("aria-pressed");
+        let target = enable ? this.sources.described : this.sources.standard;
+
+        let time = this.video.currentTime;
+        let wasPlaying = !this.video.paused && !this.video.ended;
+        let rate = this.video.playbackRate;
+
+        this.video.querySelectorAll("source").forEach(source => source.remove());
+        let firstTrack = this.video.querySelector("track");
+        target.forEach(source => this.video.insertBefore(source, firstTrack));
+        this.video.load();
+
+        this.video.addEventListener("loadedmetadata", () => {
+            this.video.currentTime = Math.min(time, this.video.duration || time);
+            this.video.playbackRate = rate;
+
+            if(wasPlaying) {
+                this.video.play()
+                    .then(() => this.#setIconPlayPause())
+                    .catch(() => this.#setIconPlayPause());
+            } else this.#setIconPlayPause();
+        }, { once: true });
+
+        btn.setAttribute("aria-pressed", enable);
+        btn.replaceChild(
+            MeuuhdiaIcon.createIcon(enable ? "audiodescription" : "audiodescription_off", enable ? this.locale.words.enabled : this.locale.words.disabled),
+            btn.querySelector("svg")
+        );
+        this.wrapper.closest(".meuuhdia").setAttribute("data-audiodescription", enable);
     }
 
     #setFullscreenData(state) {
