@@ -330,12 +330,58 @@ class MeuuhdiaCaption {
                 if(cue.align) paragraph.dataset.align = cue.align;
                 if(1 == cue.line) paragraph.classList.add("align-top");
                 paragraph.classList.add("meuuhdia_caption_cue");
-                paragraph.appendChild(cueHTML);
+                paragraph.append(...this.#splitCueLines(cueHTML));
                 return paragraph;
             });
     
             cueContainer.replaceChildren(...cues);
         } else cueContainer.replaceChildren();
+    }
+
+    /**
+     * ? Split cue content into one <span> per line
+     *
+     * @param {DocumentFragment} fragment
+     * @returns {Array<Node>} <span> elements
+     */
+    #splitCueLines(fragment) {
+        return MeuuhdiaCaption.#splitNodes(fragment.childNodes)
+            .map(nodes => {
+                let line = document.createElement("span");
+                line.classList.add("meuuhdia_caption_line");
+                line.append(...nodes);
+                return line;
+            })
+            .filter(line => "" !== line.textContent.trim());
+    }
+
+    /**
+     * ? Distribute nodes into lines, cloning tags that contain a line break
+     *
+     * @param {NodeList} nodes
+     * @returns {Array<Array<Node>>} nodes of each line
+     */
+    static #splitNodes(nodes) {
+        let lines = [[]];
+
+        Array.from(nodes).forEach(node => {
+            let parts;
+
+            if(Node.TEXT_NODE === node.nodeType) {
+                parts = node.textContent.split("\n").map(text => text ? [document.createTextNode(text)] : []);
+            } else if(Node.ELEMENT_NODE === node.nodeType) {
+                parts = MeuuhdiaCaption.#splitNodes(node.childNodes).map(children => {
+                    let clone = node.cloneNode(false);
+                    clone.append(...children);
+                    return [clone];
+                });
+            } else return;
+
+            lines[lines.length - 1].push(...parts[0]);
+            parts.slice(1).forEach(part => lines.push(part));
+        });
+
+        return lines;
     }
 
      /**

@@ -91,10 +91,10 @@ Per beneficiare di tutte le funzionalità del lettore, ecco le diverse opzioni d
 - <v.off>: parlante fuori campo o voce fuori campo (giallo, corsivo)
 - <c.sound>: effetto sonoro non indotto dall'immagine (rosso)
     - <c.numeric>: effetto sonoro proveniente da telefono, TV... (asterisco)
-- <c.think Narratore>: pensiero del personaggio o narrazione (ciano)
+- <v.think Narratore>: pensiero del personaggio o narrazione (ciano)
 - <c.music>: indicazione musicale, testo di canzoni (magenta)
-- <lang Sardo>: indicazione di lingua straniera (verde)
-- 00:10.360 --> 00:13.900 align: start/end (destra/sinistra)
+- <lang sc>: indicazione di lingua straniera, con il suo codice di lingua (qui il sardo) (verde)
+- 00:10.360 --> 00:13.900 align: start/end (sinistra/destra)
 - 00:10.360 --> 00:13.900 line: 1 (alto)
 
 ### Trascrizione testuale

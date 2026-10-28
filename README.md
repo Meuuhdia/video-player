@@ -91,10 +91,10 @@ To benefit from all player features, here are the different markup options and p
 - <v.off>: off-screen speaker or voiceover (yellow, italic)
 - <c.sound>: sound effect not induced by the image (red)
     - <c.numeric>: sound effect from a phone, TV... (asterisk)
-- <c.think Narrator>: character's thought or narration (cyan)
+- <v.think Narrator>: character's thought or narration (cyan)
 - <c.music>: musical indication, song lyrics (magenta)
-- <lang Danish>: foreign language indication (green)
-- 00:10.360 --> 00:13.900 align: start/end (right/left)
+- <lang da>: foreign language indication, with its language code (here Danish) (green)
+- 00:10.360 --> 00:13.900 align: start/end (left/right)
 - 00:10.360 --> 00:13.900 line: 1 (top)
 
 ### Text transcription

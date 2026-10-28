@@ -91,10 +91,10 @@ Pour bénéficier de l'ensemble des fonctionnalités du lecteur, voici les diff�
 - <v.off> : locuteur hors champ ou voix off (jaune, italique)
 - <c.sound> : effet sonore non induit par l'image (rouge)
     - <c.numeric> : effet sonore provenant d'un téléphone, tv... (asterisque)
-- <c.think Narrateur> : pensée du personnage ou narration (cyan)
+- <v.think Narrateur> : pensée du personnage ou narration (cyan)
 - <c.music> : indication musicale, paroles de chanson (magenta)
-- <lang Breton> : indication de langue étrangère (vert)
-- 00:10.360 --> 00:13.900 align: start/end (droite/gauche)
+- <lang br> : indication de langue étrangère, avec son code de langue (ici le breton) (vert)
+- 00:10.360 --> 00:13.900 align: start/end (gauche/droite)
 - 00:10.360 --> 00:13.900 line: 1 (haut)
 
 ### Transcription textuelle

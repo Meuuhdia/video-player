@@ -105,14 +105,18 @@ class MeuuhdiaTranscription {
                     for(let line in transcription_lines) {
                         let paragraph = document.createElement("li");
 
-                        let infos_data = line.split(" ");
+                        // ? "mm:ss Speaker": only the first space separates time from speaker (multi-word names allowed)
+                        let separator = line.indexOf(" ");
+                        let time = -1 === separator ? line : line.slice(0, separator);
+                        let speaker = -1 === separator ? "" : line.slice(separator + 1).trim();
+
                         let infos = document.createElement("button");
-                        infos.dataset.time = MeuuhdiaTime.convertTextToSeconds(infos_data[0]);
+                        infos.dataset.time = MeuuhdiaTime.convertTextToSeconds(time);
                         infos.classList.add("meuuhdia_transcription_info");
                         infos.addEventListener("click", (evt) => video.currentTime = evt.currentTarget.dataset.time);
-                        MeuuhdiaTime.populateTimeNode(locale, infos, null, infos_data[0]);
+                        MeuuhdiaTime.populateTimeNode(locale, infos, null, time);
                         let infos_voice = document.createElement("span");
-                        infos_voice.textContent = (2 ===  infos_data.length) ? (" " + infos_data[1] + ":") : ":";
+                        infos_voice.textContent = speaker ? (" " + speaker + ":") : ":";
                         infos.appendChild(infos_voice);
                         paragraph.appendChild(infos);
 
