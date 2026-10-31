@@ -6,6 +6,8 @@
 Inclusive video player with standard control options.
 You can provide translation files, subtitles, and text transcription.
 
+To create these files in the Meuuhdia format, use [Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr): an online editor that runs entirely in your browser, without sending your files to a server.
+
 The player allows users to enable and configure the display of these files themselves.
 They can customize the colors and size of subtitles to their preferences.
 
@@ -60,6 +62,8 @@ Copy the following code where you want to display the video player. This is the 
 ```
 
 ### Subtitles and translations
+[Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr) helps you create these files with the markup described below, check quality rules and generate the text transcription.
+
 VTT files provided should not contain CSS styles. Meuuhdia already applies appropriate styles so everyone can read them correctly and adapt them to their needs.
 
 #### Translation

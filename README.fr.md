@@ -6,6 +6,8 @@
 Lecteur video inclusif embarquant les options de contrôle classiques.
 Vous pouvez renseigner des fichiers de traduction, sous-titrage et transcription textuelle.
 
+Pour créer ces fichiers au format Meuuhdia, utilisez [Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr) : un éditeur en ligne qui fonctionne entièrement dans votre navigateur, sans envoyer vos fichiers sur un serveur.
+
 Le lecteur permettra à l'utilisateur d'activer et configurer lui même l'affichage de ces fichiers.
 Il pourra modifier les couleurs et taille des sous-titres à sa convenance.
 
@@ -60,6 +62,8 @@ Copiez le code suivant à l'endroit ou vous souhaitez afficher le lecteur vidéo
 ```
 
 ### Sous-titres et traductions
+[Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr) vous aide à créer ces fichiers avec le balisage décrit ci-dessous, à vérifier les règles de qualité et à générer la transcription textuelle.
+
 Les fichiers vtt renseignés ne doivent pas contenir de styles css, Meuuhdia applique deja des styles adaptés pour que tout le monde puisse les lire correctement et les adapter à ses besoins.
 
 #### Traduction

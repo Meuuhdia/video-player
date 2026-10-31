@@ -6,6 +6,8 @@
 Lettore video inclusivo che integra le opzioni di controllo classiche.
 È possibile fornire file di traduzione, sottotitoli e trascrizione testuale.
 
+Per creare questi file nel formato Meuuhdia, utilizzate [Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr): un editor online che funziona interamente nel vostro browser, senza inviare i vostri file a un server.
+
 Il lettore consente all'utente di attivare e configurare autonomamente la visualizzazione di questi file.
 Potrà modificare i colori e la dimensione dei sottotitoli secondo le sue esigenze.
 
@@ -60,6 +62,8 @@ Copiare il seguente codice nel punto in cui si desidera visualizzare il lettore 
 ```
 
 ### Sottotitoli e traduzioni
+[Meuuhdia Studio](https://meuuhdia-studio.buocennig.fr) vi aiuta a creare questi file con il markup descritto di seguito, a verificare le regole di qualità e a generare la trascrizione testuale.
+
 I file VTT forniti non devono contenere stili CSS. Meuuhdia applica già stili appropriati affinché tutti possano leggerli correttamente e adattarli alle proprie esigenze.
 
 #### Traduzione
