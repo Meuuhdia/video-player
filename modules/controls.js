@@ -35,6 +35,12 @@ class MeuuhdiaControls {
     sources;
 
     /**
+     * ? Playback state saved while an audio description switch is loading
+     * @type {?{time: number, wasPlaying: boolean, rate: number}}
+     */
+    #pendingSwitch = null;
+
+    /**
      * ? MeuuhdiaControls constructor
      * 
      * @param {Object} locale 
@@ -352,9 +358,13 @@ class MeuuhdiaControls {
         let enable = "true" !== btn.getAttribute("aria-pressed");
         let target = enable ? this.sources.described : this.sources.standard;
 
-        let time = this.video.currentTime;
-        let wasPlaying = !this.video.paused && !this.video.ended;
-        let rate = this.video.playbackRate;
+        // a second click while loading keeps the state saved by the first one (currentTime is already reset)
+        let state = this.#pendingSwitch ?? {
+            time: this.video.currentTime,
+            wasPlaying: !this.video.paused && !this.video.ended,
+            rate: this.video.playbackRate
+        };
+        this.#pendingSwitch = state;
 
         this.video.querySelectorAll("source").forEach(source => source.remove());
         let firstTrack = this.video.querySelector("track");
@@ -362,10 +372,11 @@ class MeuuhdiaControls {
         this.video.load();
 
         this.video.addEventListener("loadedmetadata", () => {
-            this.video.currentTime = Math.min(time, this.video.duration || time);
-            this.video.playbackRate = rate;
+            this.#pendingSwitch = null;
+            this.video.currentTime = Math.min(state.time, this.video.duration || state.time);
+            this.video.playbackRate = state.rate;
 
-            if(wasPlaying) {
+            if(state.wasPlaying) {
                 this.video.play()
                     .then(() => this.#setIconPlayPause())
                     .catch(() => this.#setIconPlayPause());

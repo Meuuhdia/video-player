@@ -124,6 +124,9 @@ class MeuuhdiaPlayer {
         let described = Array.from(video.querySelectorAll("source[data-audiodescription]"));
         if(!described.length) return;
 
+        // without a standard version, the described one is simply the video: no switch button
+        if(!video.querySelector("source:not([data-audiodescription])")) return;
+
         let playingDescribed = described.some(source => source.src === video.currentSrc);
         described.forEach(source => source.remove());
 
