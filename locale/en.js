@@ -36,6 +36,16 @@ export const locale = {
         transcriptionBottom: "transcription below video",
         transcriptionRight: "transcription to the right of video"
     },
+    ad: {
+        selection: "Choose an audio description",
+        recorded: "Audio described video",
+        spoken: "Spoken descriptions",
+        mode: "Output",
+        modeSpeech: "synthesized voice",
+        modeLive: "screen reader",
+        rate: "Speech rate",
+        pause: "Pause to finish descriptions"
+    },
     words: {
         enabled: "enabled",
         disabled: "disabled",

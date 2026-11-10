@@ -3,8 +3,9 @@
 /**
  * ? Caption disclosure
  */
-.meuuhdia_caption {
-    .meuuhdia_caption_content {
+.meuuhdia_caption .meuuhdia_caption_content,
+.meuuhdia_ad .meuuhdia_ad_content {
+    & {
         font-size: calc(1.3em * 0.6);
         padding: calc(0.5em * 0.6);
         width: max-content;
@@ -72,11 +73,27 @@
                     label {
                         text-transform: capitalize;
                         width: 30%;
+                        min-width: max-content;
                     }
                     
                     input,
                     select {
                         width: 70%;
+                    }
+
+                    &.meuuhdia_customize_check {
+                        justify-content: flex-start;
+
+                        label {
+                            width: auto;
+                            min-width: 0;
+                            text-transform: none;
+                        }
+
+                        input {
+                            width: auto;
+                            margin: 0;
+                        }
                     }
     
                     &:has(> input[disabled]) {

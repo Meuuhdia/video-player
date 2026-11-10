@@ -62,9 +62,15 @@
         }
     }
 
+    &_heading_side[hidden] {
+        display: none;
+    }
+
     &_container {
         max-height: 50vh;
         overflow-y: scroll;
+        // contains the hidden (sr-only, absolute) texts, which otherwise stretched the page below the footer
+        position: relative;
 
         .meuuhdia_transcription_info {
             display: block;
@@ -73,5 +79,32 @@
             text-decoration: underline;
             border: none;
         }
+    }
+}
+
+// ? transcription on the right: the video shrinks to leave it room (see MeuuhdiaTranscription.watchSpace)
+.meuuhdia.meuuhdia--row {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    gap: 1em;
+
+    .meuuhdia_wrapper {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .meuuhdia_transcription {
+        flex: 0 0 20em;
+        width: 20em;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        max-height: var(--meuuhdia-video-height, none);
+    }
+
+    .meuuhdia_transcription_container {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
     }
 }

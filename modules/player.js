@@ -97,11 +97,13 @@ class MeuuhdiaPlayer {
         this.video.querySelectorAll("track").forEach(track => {
             const allowed_types = ["captions", "subtitles", "descriptions"];
             var current_type = track.getAttribute("kind");
-            var extension = track.getAttribute("src")?.split(".").pop();
+            var extension = track.getAttribute("src")?.split(".").pop().split(/[?#]/)[0].toLowerCase();
 
-            if(allowed_types.includes(current_type) && ("descriptions" != current_type || "json" == extension)) {
-                track.id = current_type + "_" + track.getAttribute("srclang");
-            } else track.remove();            
+            if(!allowed_types.includes(current_type) || ("descriptions" == current_type && !["json", "vtt"].includes(extension))) {
+                track.remove();
+            } else if("descriptions" == current_type && "vtt" == extension) {
+                track.id = "audiodescription_" + track.getAttribute("srclang");
+            } else track.id = current_type + "_" + track.getAttribute("srclang");
         });
         
         let Controls = new MeuuhdiaControls(this.locale, this.wrapper, this.video, this.sources);

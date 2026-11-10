@@ -1,6 +1,11 @@
 import { MeuuhdiaTime } from "./time.js";
 import { MeuuhdiaIcon } from "./icon.js";
 
+// ? transcription on the right: minimum widths (in em) of the video and the transcription
+const MIN_VIDEO_WIDTH = 24;
+const SIDE_WIDTH = 20;
+const SIDE_GAP = 1;
+
 class MeuuhdiaTranscription {
     static addTranscription(locale, meuuhdia_wrapper, descriptions, video) {
         let wrapper = document.createElement("div");
@@ -81,6 +86,55 @@ class MeuuhdiaTranscription {
         heading.appendChild(transcriptionSide);
         wrapper.appendChild(heading);
         meuuhdia_wrapper.insertAdjacentElement("afterend", wrapper);
+
+        MeuuhdiaTranscription.watchSpace(meuuhdia_wrapper, wrapper, video);
+    }
+
+    /**
+     * ? The transcription goes on the right only if the video can shrink enough to leave it room
+     *
+     * @param {Node} meuuhdia_wrapper
+     * @param {Node} transcription
+     * @param {Node} video
+     */
+    static watchSpace(meuuhdia_wrapper, transcription, video) {
+        let meuuhdia = meuuhdia_wrapper.closest(".meuuhdia");
+        let sides = transcription.querySelector(".meuuhdia_transcription_heading_side");
+        if(!meuuhdia || !("ResizeObserver" in window)) return;
+
+        let update = () => {
+            let parent = meuuhdia.parentElement;
+            if(!parent) return;
+
+            let parentStyle = window.getComputedStyle(parent);
+            let available = document.fullscreenElement === meuuhdia
+                ? window.innerWidth
+                : parent.clientWidth - parseFloat(parentStyle.paddingLeft) - parseFloat(parentStyle.paddingRight);
+            let em = parseFloat(window.getComputedStyle(meuuhdia).fontSize) || 16;
+            let fits = available >= (MIN_VIDEO_WIDTH + SIDE_WIDTH + SIDE_GAP) * em;
+
+            sides.hidden = !fits;
+            MeuuhdiaTranscription.applySide(meuuhdia, transcription, video, fits && "right" === meuuhdia.dataset.transcriptionSide);
+
+            // the transcription on the right is as tall as the video
+            meuuhdia.style.setProperty("--meuuhdia-video-height", meuuhdia_wrapper.offsetHeight + "px");
+        };
+
+        let observer = new ResizeObserver(() => window.requestAnimationFrame(update));
+        observer.observe(meuuhdia.parentElement);
+        observer.observe(meuuhdia_wrapper);
+    }
+
+    /**
+     * ? Display the transcription below or on the right of the video
+     */
+    static applySide(meuuhdia, transcription, video, right) {
+        meuuhdia.classList.toggle("meuuhdia--row", right);
+        transcription.style.maxWidth = right ? "" : (video.videoWidth ? video.videoWidth + "px" : "");
+
+        transcription.querySelectorAll(".meuuhdia_transcription_heading_side button").forEach(btn => {
+            btn.setAttribute("aria-pressed", (right ? "right" : "bottom") === btn.dataset.side);
+        });
     }
 
     static switchTranscription(locale, evt, video) {
@@ -90,7 +144,10 @@ class MeuuhdiaTranscription {
         let previous_transcription = container.querySelector(".meuuhdia_transcription_container");
         if(previous_transcription) previous_transcription.remove();
 
-        let track = desc.closest(".meuuhdia").querySelector("track[kind='descriptions'][srclang='"+desc.value+"']");
+        let track = desc.closest(".meuuhdia").querySelector("track[id='descriptions_"+desc.value+"']");
+
+        // ? a displayed transcription stays visible in fullscreen
+        desc.closest(".meuuhdia").dataset.transcription = track ? "on" : "off";
 
         if(track) {
             fetch(track.getAttribute("src"))
@@ -133,13 +190,13 @@ class MeuuhdiaTranscription {
     }
 
     static moveTranscription(evt) {
-        let currentPosition = evt.currentTarget.closest(".meuuhdia_transcription_heading_side").querySelector("button[aria-pressed='true']");
-        let container = evt.currentTarget.closest(".meuuhdia");
-        let targetPosition = evt.currentTarget == currentPosition ? evt.currentTarget.closest(".meuuhdia_transcription_heading_side").querySelector("button[aria-pressed='false']") : evt.currentTarget;
-        
-        container.classList.toggle("meuuhdia--row");
-        currentPosition.setAttribute("aria-pressed", "false");
-        targetPosition.setAttribute("aria-pressed", "true");
+        let btn = evt.currentTarget;
+        let meuuhdia = btn.closest(".meuuhdia");
+        let transcription = btn.closest(".meuuhdia_transcription");
+
+        // the user's choice, applied only while there is room for it
+        meuuhdia.dataset.transcriptionSide = btn.dataset.side;
+        MeuuhdiaTranscription.applySide(meuuhdia, transcription, meuuhdia.querySelector("video"), "right" === btn.dataset.side);
     }
 }
 

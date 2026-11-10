@@ -1,7 +1,9 @@
+import { MeuuhdiaAudioDescription } from "./audiodescription.js";
 import { MeuuhdiaCaption } from "./caption.js";
 import { meuuhdiaDisclosure } from "./disclosure.js";
 import { MeuuhdiaIcon } from "./icon.js";
 import { MeuuhdiaTime } from "./time.js";
+import { MeuuhdiaTranscription } from "./transcription.js";
 
 class MeuuhdiaControls {
     /**
@@ -41,6 +43,20 @@ class MeuuhdiaControls {
     #pendingSwitch = null;
 
     /**
+     * ? Audio described source currently loaded
+     * @type {boolean}
+     */
+    #describedActive = false;
+
+    /**
+     * ? Reader of the audio description tracks (WebVTT)
+     * @type {?MeuuhdiaAudioDescription}
+     */
+    audioDescription = null;
+
+    static #audioDescriptionIndex = 0;
+
+    /**
      * ? MeuuhdiaControls constructor
      * 
      * @param {Object} locale 
@@ -71,13 +87,26 @@ class MeuuhdiaControls {
         this.controls.appendChild(progress);
         this.controls.appendChild(volume);
 
-        if(0 < this.video.textTracks.length) {
+        let textTracks = Array.from(this.video.textTracks);
+        let adTracks = textTracks.filter(track => track.id.startsWith("audiodescription_"));
+        let captionTracks = textTracks.filter(track => ["captions", "subtitles"].includes(track.kind));
+        let transcriptions = textTracks.filter(track => track.id.startsWith("descriptions_"));
+
+        if(0 < captionTracks.length) {
+            // the caption menu also adds the transcription
             let Caption = new MeuuhdiaCaption(this.locale, this.wrapper, this.video, this.controls);
             this.wrapper.appendChild(Caption.createCaptionContainer());
             this.controls.appendChild(Caption.createCaption(this.video.textTracks));            
+        } else if(0 < transcriptions.length) {
+            // transcription only: no caption button
+            MeuuhdiaTranscription.addTranscription(this.locale, this.wrapper, transcriptions, this.video);
         }
 
-        if(0 < this.sources.described.length) {
+        if(0 < adTracks.length) {
+            // descriptions to read (and maybe a recorded version): menu
+            this.controls.appendChild(this.#createAudioDescriptionMenu(adTracks));
+        } else if(0 < this.sources.described.length) {
+            // recorded version only: simple toggle button
             let audiodescription = this.#createButton("meuuhdia_ad", MeuuhdiaIcon.createIcon("audiodescription_off", this.locale.words.disabled), this.locale.controls.audiodescription);
             let audiodescription_btn = audiodescription.querySelector("button");
             audiodescription_btn.setAttribute("aria-pressed", "false");
@@ -294,6 +323,9 @@ class MeuuhdiaControls {
     }
 
     #setVolumeIcon() {
+        // volume temporarily lowered while a description is spoken
+        if("true" === this.video.dataset.meuuhdiaDucking) return;
+
         let volume = this.controls.querySelector(".meuuhdia_volume_action")
         let volume_icon = volume.querySelector("svg");
         let newIcon = null;
@@ -368,12 +400,31 @@ class MeuuhdiaControls {
     }
 
     /**
-     * ? Swap between standard and audio described sources, keeping position and playback state
+     * ? Toggle button (recorded version only)
      */
     #switchAudioDescription() {
         let btn = this.controls.querySelector(".meuuhdia_ad");
         let enable = "true" !== btn.getAttribute("aria-pressed");
+
+        this.#setDescribedSource(enable);
+
+        btn.setAttribute("aria-pressed", enable);
+        btn.replaceChild(
+            MeuuhdiaIcon.createIcon(enable ? "audiodescription" : "audiodescription_off", enable ? this.locale.words.enabled : this.locale.words.disabled),
+            btn.querySelector("svg")
+        );
+        this.wrapper.closest(".meuuhdia").setAttribute("data-audiodescription", enable);
+    }
+
+    /**
+     * ? Swap between standard and audio described sources, keeping position and playback state
+     *
+     * @param {boolean} enable
+     * @param {?Function} onReady called once the new source is positioned
+     */
+    #setDescribedSource(enable, onReady = null) {
         let target = enable ? this.sources.described : this.sources.standard;
+        this.#describedActive = enable;
 
         // a second click while loading keeps the state saved by the first one (currentTime is already reset)
         let state = this.#pendingSwitch ?? {
@@ -398,14 +449,199 @@ class MeuuhdiaControls {
                     .then(() => this.#setIconPlayPause())
                     .catch(() => this.#setIconPlayPause());
             } else this.#setIconPlayPause();
-        }, { once: true });
 
-        btn.setAttribute("aria-pressed", enable);
-        btn.replaceChild(
-            MeuuhdiaIcon.createIcon(enable ? "audiodescription" : "audiodescription_off", enable ? this.locale.words.enabled : this.locale.words.disabled),
-            btn.querySelector("svg")
+            if(onReady) onReady();
+        }, { once: true });
+    }
+
+    /**
+     * ? Audio description menu: off, recorded version, descriptions to read and their settings
+     *
+     * @param {Array<TextTrack>} tracks
+     * @returns {Node} <li> element
+     */
+    #createAudioDescriptionMenu(tracks) {
+        let index = ++MeuuhdiaControls.#audioDescriptionIndex;
+        this.audioDescription = new MeuuhdiaAudioDescription(this.wrapper, this.video);
+
+        /**
+         * ? Choices
+         */
+        let selection = document.createElement("details");
+        selection.setAttribute("open", "true");
+
+        let legend = document.createElement("summary");
+        legend.textContent = this.locale.ad.selection;
+        selection.appendChild(legend);
+
+        let choices = document.createElement("ul");
+        choices.classList.add("list-unstyled");
+
+        let off = document.createElement("li");
+        off.classList.add("meuuhdia_caption_sublist");
+        off.appendChild(this.#createAudioDescriptionChoice(this.locale.words.disable, "off", true));
+        choices.appendChild(off);
+
+        // the recorded version comes first: it is the preferred one
+        if(0 < this.sources.described.length) {
+            let recorded = document.createElement("li");
+            recorded.classList.add("meuuhdia_caption_sublist");
+            recorded.appendChild(this.#createAudioDescriptionChoice(this.locale.ad.recorded, "recorded"));
+            choices.appendChild(recorded);
+        }
+
+        let spoken = document.createElement("li");
+        spoken.classList.add("meuuhdia_caption_sublist");
+
+        let spokenHeader = document.createElement("p");
+        spokenHeader.textContent = this.locale.ad.spoken;
+        spoken.appendChild(spokenHeader);
+
+        let spokenList = document.createElement("ul");
+        spokenList.classList.add("list-unstyled");
+        tracks.forEach(track => {
+            let item = document.createElement("li");
+            let btn = this.#createAudioDescriptionChoice(track.label || track.language, track.id);
+            if(track.language) btn.setAttribute("lang", track.language);
+            item.appendChild(btn);
+            spokenList.appendChild(item);
+        });
+        spoken.appendChild(spokenList);
+        choices.appendChild(spoken);
+
+        selection.appendChild(choices);
+
+        /**
+         * ? Settings
+         */
+        let customize = document.createElement("details");
+        let customizeLegend = document.createElement("summary");
+        customizeLegend.textContent = this.locale.cc.customize;
+        customize.appendChild(customizeLegend);
+
+        let options = document.createElement("ul");
+        options.classList.add("meuuhdia_customize_options", "list-unstyled");
+
+        let settings = this.audioDescription.settings;
+        let speech = MeuuhdiaAudioDescription.speechAvailable();
+
+        // ? output
+        let mode = document.createElement("select");
+        [
+            { value: "speech", label: this.locale.ad.modeSpeech },
+            { value: "live", label: this.locale.ad.modeLive }
+        ].forEach(opt => {
+            let option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.label;
+            if("speech" === opt.value && !speech) option.disabled = true;
+            mode.appendChild(option);
+        });
+        mode.value = speech ? settings.mode : "live";
+        mode.addEventListener("change", evt => this.audioDescription.setSettings({ mode: evt.currentTarget.value }));
+        options.appendChild(this.#createSetting(this.locale.ad.mode, "meuuhdia_ad_mode_" + index, mode));
+
+        // ? speech rate
+        let rate = document.createElement("input");
+        rate.type = "range";
+        rate.min = "0.5";
+        rate.max = "2";
+        rate.step = "0.1";
+        rate.value = settings.rate;
+        rate.classList.add("meuuhdia_range_horizontal");
+        rate.addEventListener("change", evt => this.audioDescription.setSettings({ rate: parseFloat(evt.currentTarget.value) }));
+        options.appendChild(this.#createSetting(this.locale.ad.rate, "meuuhdia_ad_rate_" + index, rate));
+
+        // ? pause until the description is finished
+        let pause = document.createElement("input");
+        pause.type = "checkbox";
+        pause.checked = settings.pause;
+        pause.addEventListener("change", evt => this.audioDescription.setSettings({ pause: evt.currentTarget.checked }));
+        options.appendChild(this.#createSetting(this.locale.ad.pause, "meuuhdia_ad_pause_" + index, pause));
+
+        customize.appendChild(options);
+
+        return meuuhdiaDisclosure.createDisclosure("ad", "audiodescription_off", this.locale.controls.audiodescription, [selection, customize], this.locale.words.disabled);
+    }
+
+    /**
+     * ? Audio description choice button
+     *
+     * @param {string} label
+     * @param {string} choice "off", "recorded" or a track id
+     * @param {boolean} pressed
+     * @returns {Node} <button> element
+     */
+    #createAudioDescriptionChoice(label, choice, pressed = false) {
+        let btn = document.createElement("button");
+        btn.textContent = label;
+        btn.dataset.choice = choice;
+        btn.setAttribute("type", "button");
+        btn.setAttribute("aria-pressed", pressed);
+        btn.addEventListener("click", this.#selectAudioDescription.bind(this));
+
+        return btn;
+    }
+
+    /**
+     * ? Setting row: label and its field
+     *
+     * @param {string} label
+     * @param {string} id
+     * @param {Node} field
+     * @returns {Node} <li> element
+     */
+    #createSetting(label, id, field) {
+        let item = document.createElement("li");
+
+        let fieldLabel = document.createElement("label");
+        fieldLabel.textContent = label;
+        fieldLabel.setAttribute("for", id);
+        field.setAttribute("id", id);
+
+        // checkbox before its label
+        if("checkbox" === field.type) {
+            item.classList.add("meuuhdia_customize_check");
+            item.appendChild(field);
+            item.appendChild(fieldLabel);
+        } else {
+            item.appendChild(fieldLabel);
+            item.appendChild(field);
+        }
+
+        return item;
+    }
+
+    #selectAudioDescription(evt) {
+        let choice = evt.currentTarget.dataset.choice;
+        let menu = this.controls.querySelector(".meuuhdia_ad");
+
+        menu.querySelectorAll("button[data-choice]").forEach(btn => btn.setAttribute("aria-pressed", btn === evt.currentTarget));
+
+        let enabled = "off" !== choice;
+        let action = menu.querySelector(".meuuhdia_ad_action");
+        action.replaceChild(
+            MeuuhdiaIcon.createIcon(enabled ? "audiodescription" : "audiodescription_off", enabled ? this.locale.words.enabled : this.locale.words.disabled),
+            action.querySelector("svg")
         );
-        this.wrapper.closest(".meuuhdia").setAttribute("data-audiodescription", enable);
+        this.wrapper.closest(".meuuhdia").setAttribute("data-audiodescription", enabled);
+
+        // descriptions start once the right source is loaded and positioned
+        let button = evt.currentTarget;
+        let startDescriptions = () => {
+            // another choice may have been made while the source was loading
+            if("true" !== button.getAttribute("aria-pressed")) return;
+
+            let track = this.video.textTracks.getTrackById(choice);
+            if(track) this.audioDescription.enable(track);
+            else this.audioDescription.disable();
+        };
+
+        let recorded = "recorded" === choice;
+        if(recorded !== this.#describedActive) {
+            this.audioDescription.disable();
+            this.#setDescribedSource(recorded, startDescriptions);
+        } else startDescriptions();
     }
 
     #setFullscreenData(state) {

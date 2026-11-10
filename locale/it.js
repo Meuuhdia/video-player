@@ -36,6 +36,16 @@ export const locale = {
         transcriptionBottom: "trascrizione sotto il video",
         transcriptionRight: "trascrizione a destra del video"
     },
+    ad: {
+        selection: "Scegli un'audiodescrizione",
+        recorded: "Video audiodescritto",
+        spoken: "Descrizioni lette",
+        mode: "Modalità",
+        modeSpeech: "voce sintetica",
+        modeLive: "lettore di schermo",
+        rate: "Velocità",
+        pause: "Pausa per finire le descrizioni"
+    },
     words: {
         enabled: "attivato",
         disabled: "disattivato",

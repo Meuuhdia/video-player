@@ -77,7 +77,8 @@ class MeuuhdiaCaption {
          */
         let captions = Object.values(textTracks).filter(track => "captions" === track.kind);
         let subtitles = Object.values(textTracks).filter(track => "subtitles" === track.kind);
-        let descriptions = Object.values(textTracks).filter(track => "descriptions" === track.kind);
+        // ? transcriptions only: audio description tracks (id "audiodescription_*") have their own menu
+        let descriptions = Object.values(textTracks).filter(track => "descriptions" === track.kind && track.id.startsWith("descriptions_"));
 
         if(0 < captions.length) tracks_list.appendChild(this.#createTrackList(captions, this.locale.cc.caption));
         if(0 < subtitles.length) tracks_list.appendChild(this.#createTrackList(subtitles, this.locale.cc.subtitles));
