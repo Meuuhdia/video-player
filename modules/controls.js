@@ -139,8 +139,9 @@ class MeuuhdiaControls {
         else {
             fullscreen.addEventListener("click", this.#fullscreen.bind(this));
 
-            document.addEventListener("fullscreenchange", (e) => {
-                this.#setFullscreenData(!!document.fullscreenElement);
+            // ? only the player shown in fullscreen changes, not the other players of the page
+            document.addEventListener("fullscreenchange", () => {
+                this.#setFullscreenData(document.fullscreenElement === this.wrapper.closest(".meuuhdia"));
             });              
         }
 

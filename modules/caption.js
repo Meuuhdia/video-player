@@ -3,6 +3,8 @@ import { MeuuhdiaIcon } from "./icon.js";
 import { MeuuhdiaTranscription } from "./transcription.js";
 
 class MeuuhdiaCaption {
+    static #index = 0;
+
     /**
      * @type {Object}
      */
@@ -47,6 +49,9 @@ class MeuuhdiaCaption {
      * @returns {Node} <li> element
      */
     createCaption(textTracks) {
+        // ? unique ids when several players are on the page
+        let index = ++MeuuhdiaCaption.#index;
+
         let selection = document.createElement("details");
         selection.setAttribute("open", "true");
 
@@ -112,7 +117,7 @@ class MeuuhdiaCaption {
         text_options_list.appendChild(
             this.#createRangeInput(
                 this.locale.cc.textSize,
-                "meuuhdia_caption_size",
+                "meuuhdia_caption_size_" + index,
                 "50",
                 "200",
                 "100",
@@ -125,7 +130,7 @@ class MeuuhdiaCaption {
         text_options_list.appendChild(
             this.#createSelector(
                 this.locale.words.theme,
-                "text_color",
+                "text_color_" + index,
                 [
                     {
                         value: "default",
@@ -143,7 +148,7 @@ class MeuuhdiaCaption {
         text_options_list.appendChild(
             this.#createColorInput(
                 this.locale.words.color,
-                "meuuhdia_textcolor",
+                "meuuhdia_textcolor_" + index,
                 "#FFFF00",
                 "--meuuhdia-cue-color"
             )
@@ -168,7 +173,7 @@ class MeuuhdiaCaption {
         bg_options_list.appendChild(
             this.#createSelector(
                 this.locale.words.style,
-                "bg_style",
+                "bg_style_" + index,
                 [
                     {
                         value: "stroke",
@@ -186,7 +191,7 @@ class MeuuhdiaCaption {
         bg_options_list.appendChild(
             this.#createColorInput(
                 this.locale.words.color,
-                "meuuhdia_bgcolor",
+                "meuuhdia_bgcolor_" + index,
                 "#000000",
                 "--meuuhdia-cue-bgcolor"
             )
@@ -452,7 +457,7 @@ class MeuuhdiaCaption {
             selector.appendChild(newOpt);
         });
 
-        switch(identifiant) {
+        switch(identifiant.replace(/_\d+$/, "")) {
             case "text_color":
                 selector.addEventListener("change", (evt) => {
                     this.wrapper.querySelector(".meuuhdia_caption_container").classList.toggle("meuuhdia_custom_colors");
