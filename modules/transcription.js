@@ -7,7 +7,12 @@ const SIDE_WIDTH = 20;
 const SIDE_GAP = 1;
 
 class MeuuhdiaTranscription {
+    // ? unique ids when several players are on the page
+    static #index = 0;
+
     static addTranscription(locale, meuuhdia_wrapper, descriptions, video) {
+        let index = ++MeuuhdiaTranscription.#index;
+
         let wrapper = document.createElement("div");
         wrapper.classList.add("meuuhdia_transcription");
         wrapper.style.maxWidth = video.videoWidth + "px";
@@ -19,12 +24,12 @@ class MeuuhdiaTranscription {
         selectorContainer.classList.add("meuuhdia_transcription_heading_lang");
 
         let label = document.createElement("label");
-        label.setAttribute("for", "transcription_lang");
+        label.setAttribute("for", "meuuhdia_transcription_lang_" + index);
         label.textContent = locale.cc.transcriptionLabel;        
 
         let selector = document.createElement("select");
-        selector.setAttribute("id", "transcription_lang");
-        selector.setAttribute("name", "transcription_lang");
+        selector.setAttribute("id", "meuuhdia_transcription_lang_" + index);
+        selector.setAttribute("name", "meuuhdia_transcription_lang_" + index);
         selector.addEventListener("change", (evt) => MeuuhdiaTranscription.switchTranscription(locale, evt, video));
 
         let transcriptionOff = document.createElement("option");
@@ -141,19 +146,29 @@ class MeuuhdiaTranscription {
         let desc = evt.currentTarget;
         let container = desc.closest(".meuuhdia_transcription");
 
-        let previous_transcription = container.querySelector(".meuuhdia_transcription_container");
-        if(previous_transcription) previous_transcription.remove();
+        let clear = () => container.querySelectorAll(".meuuhdia_transcription_container, .meuuhdia_transcription_error").forEach(el => el.remove());
+        clear();
 
         let track = desc.closest(".meuuhdia").querySelector("track[id='descriptions_"+desc.value+"']");
 
         // ? a displayed transcription stays visible in fullscreen
         desc.closest(".meuuhdia").dataset.transcription = track ? "on" : "off";
 
+        // ? only the last chosen language is displayed
+        let request = String(Number(container.dataset.request ?? 0) + 1);
+        container.dataset.request = request;
+        let isCurrent = () => request === container.dataset.request;
+
         if(track) {
             fetch(track.getAttribute("src"))
-                .then(response => response.text())
-                .then(text => {
-                    let transcription_lines = JSON.parse(text);
+                .then(response => {
+                    if(!response.ok) throw new Error(response.status);
+                    return response.json();
+                })
+                .then(transcription_lines => {
+                    if(!isCurrent()) return;
+                    clear();
+
                     let lines_container = document.createElement("ol");
                     lines_container.classList.add("meuuhdia_transcription_container");
                     lines_container.classList.add("list-unstyled");
@@ -186,6 +201,17 @@ class MeuuhdiaTranscription {
 
                     container.appendChild(lines_container);
                 })
+                .catch(() => {
+                    // missing or invalid file: say so instead of showing nothing
+                    if(!isCurrent()) return;
+                    clear();
+
+                    let error = document.createElement("p");
+                    error.classList.add("meuuhdia_transcription_error");
+                    error.setAttribute("role", "status");
+                    error.textContent = locale.cc.transcriptionError;
+                    container.appendChild(error);
+                });
         }
     }
 

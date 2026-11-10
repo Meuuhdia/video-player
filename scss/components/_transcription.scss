@@ -62,6 +62,10 @@
         }
     }
 
+    &_error {
+        margin-top: 1em;
+    }
+
     &_heading_side[hidden] {
         display: none;
     }

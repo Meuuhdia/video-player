@@ -33,6 +33,7 @@ export const locale = {
         textSectionLegend: "Il testo",
         bgSectionLegend: "Lo sfondo",
         transcriptionLabel: "Trascrizione testuale",
+        transcriptionError: "non è stato possibile caricare la trascrizione",
         transcriptionBottom: "trascrizione sotto il video",
         transcriptionRight: "trascrizione a destra del video"
     },

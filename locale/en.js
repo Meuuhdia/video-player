@@ -33,6 +33,7 @@ export const locale = {
         textSectionLegend: "Text",
         bgSectionLegend: "Background",
         transcriptionLabel: "Text transcription",
+        transcriptionError: "the transcription could not be loaded",
         transcriptionBottom: "transcription below video",
         transcriptionRight: "transcription to the right of video"
     },
