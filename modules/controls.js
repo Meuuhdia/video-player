@@ -116,6 +116,16 @@ class MeuuhdiaControls {
         }
 
         this.video.addEventListener("volumechange", this.#setVolumeIcon.bind(this));
+
+        // the video can also be paused or played by the audio description
+        this.video.addEventListener("play", () => this.#setIconPlayPause());
+        this.video.addEventListener("pause", () => this.#setIconPlayPause());
+
+        let showControls = this.#toggleControls.bind(this);
+        let player = this.wrapper.closest(".meuuhdia") ?? this.wrapper;
+        ["mousemove", "pointerdown", "keydown", "focusin"].forEach(type => player.addEventListener(type, showControls));
+        this.video.addEventListener("play", showControls);
+        this.video.addEventListener("pause", showControls);
     }
 
     #checkKey(evt) {
@@ -143,25 +153,25 @@ class MeuuhdiaControls {
 
         if (!$autoplay & (this.video.paused || this.video.ended)) {
             play.replaceChild(MeuuhdiaIcon.createIcon("play"), icon);
-            label.textContent = "lecture";            
+            label.textContent = this.locale.controls.play;
         } else {
             play.replaceChild(MeuuhdiaIcon.createIcon("pause"), icon);
-            label.textContent = "pause";
+            label.textContent = this.locale.controls.pause;
         }
     }
 
     #toggleControls() {
         clearTimeout(this.controlsTimeout);
         this.wrapper.classList.remove("meuuhdia_hide_controls");
-        this.wrapper.removeEventListener("keydown", this.#toggleControls.bind(this), {once: true});
-        this.wrapper.removeEventListener("mousemove", this.#toggleControls.bind(this), {once: true});
 
-        if(this.video.paused) return;
+        if(this.video.paused || this.video.ended) return;
 
-        this.wrapper.addEventListener("keydown", this.#toggleControls.bind(this), {once: true});
-        this.wrapper.addEventListener("mousemove", this.#toggleControls.bind(this), {once: true});
+        this.controlsTimeout = setTimeout(() => {
+            // still in use: pointer over the controls or a menu open
+            if(this.controls.matches(":hover") || this.controls.querySelector('[aria-expanded="true"]')) return this.#toggleControls();
 
-        this.controlsTimeout = setTimeout(() => this.wrapper.classList.add("meuuhdia_hide_controls"), 5000);
+            this.wrapper.classList.add("meuuhdia_hide_controls");
+        }, 5000);
     }
 
     /**
