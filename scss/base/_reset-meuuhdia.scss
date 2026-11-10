@@ -29,6 +29,7 @@
     option {        
         appearance: auto;
         width: auto;
+        max-width: none; // e.g. "p, li { max-width: 80ch }" on the host site
         margin: 0;
         padding: 0;
         background: $meuuhdia-color-secondary;

@@ -339,17 +339,24 @@ class MeuuhdiaControls {
             MeuuhdiaTime.populateTimeNode(this.locale, timetotal_el, this.video.duration);
         });
 
+        // while the user drags the progress bar, playback must not move it back
+        let dragging = false;
+        progress.addEventListener("input", () => dragging = true);
+
         this.video.addEventListener("timeupdate", () => {
             if (!progress.hasAttribute("max")) progress.setAttribute("max", this.video.duration);
 
             let duration_now = MeuuhdiaTime.convertSecondsToDuration(this.locale, this.video.currentTime);
             
-            progress.value = this.video.currentTime;
+            if(!dragging) progress.value = this.video.currentTime;
             progress_container.querySelector(".meuuhdia_timenow span[aria-hidden]").textContent = duration_now.text;
             progress_container.querySelector(".meuuhdia_timenow .sr-only").textContent = duration_now.label;
         });
 
-        progress.addEventListener("change", (evt) => this.video.currentTime = evt.currentTarget.value);
+        progress.addEventListener("change", (evt) => {
+            dragging = false;
+            this.video.currentTime = evt.currentTarget.value;
+        });
     }
 
     #fullscreen() {        

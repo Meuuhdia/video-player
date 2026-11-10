@@ -62,6 +62,11 @@ export let meuuhdiaDisclosure = {
         item.appendChild(content);
         item.addEventListener("focusout", meuuhdiaDisclosure.closeDisclosure);
 
+        item.addEventListener("pointerdown", () => {
+            item.dataset.pointerInside = "true";
+            document.addEventListener("pointerup", () => setTimeout(() => delete item.dataset.pointerInside), { once: true });
+        });
+
         return item;
     },
 
@@ -85,15 +90,12 @@ export let meuuhdiaDisclosure = {
      * @returns {void}
      */
     closeDisclosure: function(evt) {
-        if(evt.relatedTarget) {
-            let inDisclosure = evt.relatedTarget.closest(".meuuhdia_disclosure") === evt.currentTarget.closest(".meuuhdia_disclosure");
-        
-            if(!inDisclosure) {
-                let disclosure = evt.target.closest(".meuuhdia_disclosure");
-                
-                disclosure.querySelector(".meuuhdia_disclosure_action").setAttribute("aria-expanded", "false");
-                disclosure.querySelector(".meuuhdia_disclosure_content").style.display = "none";
-            }
-        }        
+        let disclosure = evt.currentTarget.closest(".meuuhdia_disclosure");
+
+        // focus lost to nothing, still inside, or moved by a click inside the disclosure
+        if(!evt.relatedTarget || disclosure.contains(evt.relatedTarget) || disclosure.dataset.pointerInside) return;
+
+        disclosure.querySelector(".meuuhdia_disclosure_action").setAttribute("aria-expanded", "false");
+        disclosure.querySelector(".meuuhdia_disclosure_content").style.display = "none";
     }
 }
