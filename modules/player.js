@@ -76,11 +76,10 @@ class MeuuhdiaPlayer {
         let video_origin = this.meuuhdia ? this.meuuhdia.querySelector("video") : null;
         if(video_origin && !this.meuuhdiaIsInit) this.#extractDescribedSources(video_origin);
 
-        if(MeuuhdiaPlayer.#supportsVideo && video_origin && 0 < video_origin.querySelectorAll("source").length) {
-            if(video_origin.readyState) {
-                if(!this.meuuhdiaIsInit) this.#createMeuuhdiaWrapper();
-                else this.#displayPlayer();
-            } else video_origin.addEventListener("loadeddata", this.initPlayer.bind(this));
+        // ? no need to wait for the video: Safari does not load anything before play with preload="metadata"
+        // (and iOS ignores preload), the player would only appear after the first play
+        if(MeuuhdiaPlayer.#supportsVideo && video_origin && 0 < video_origin.querySelectorAll("source").length && !this.meuuhdiaIsInit) {
+            this.#createMeuuhdiaWrapper();
         }
     }
 
@@ -140,11 +139,16 @@ class MeuuhdiaPlayer {
     }
 
     #displayPlayer() {
-        if(this.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-            this.video.controls = false;
-            this.wrapper.style.maxWidth = this.video.videoWidth + "px";
-            this.video.classList.add("meuuhdia_video");
-        } else this.video.addEventListener("loadeddata", this.#displayPlayer.bind(this));
+        this.video.controls = false;
+        this.video.classList.add("meuuhdia_video");
+
+        // ? the wrapper never gets wider than the video, known once its metadata are loaded
+        let setWidth = () => {
+            if(this.video.videoWidth) this.wrapper.style.maxWidth = this.video.videoWidth + "px";
+        };
+
+        if(this.video.readyState >= HTMLMediaElement.HAVE_METADATA) setWidth();
+        this.video.addEventListener("loadedmetadata", setWidth);
     }
 }
 

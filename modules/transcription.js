@@ -15,7 +15,12 @@ class MeuuhdiaTranscription {
 
         let wrapper = document.createElement("div");
         wrapper.classList.add("meuuhdia_transcription");
-        wrapper.style.maxWidth = video.videoWidth + "px";
+        // ? as wide as the video, known once its metadata are loaded
+        let setWidth = () => {
+            if(video.videoWidth && !wrapper.closest(".meuuhdia--row")) wrapper.style.maxWidth = video.videoWidth + "px";
+        };
+        setWidth();
+        video.addEventListener("loadedmetadata", setWidth);
 
         let heading = document.createElement("div");
         heading.classList.add("meuuhdia_transcription_heading");

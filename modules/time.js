@@ -13,6 +13,9 @@ class MeuuhdiaTime {
     }
 
     static convertSecondsToDuration(locale, seconds) {
+        // ? unknown (metadata not loaded yet) or infinite (live stream) duration
+        if(!Number.isFinite(seconds)) return { text: "--:--", label: "", datetime: "" };
+
         let slice = 3600 <= seconds ? 11 : 14;
         let duration_ISO = new Date(Math.round(seconds) * 1000).toISOString();
         let duration_text = duration_ISO.slice(slice, 19);

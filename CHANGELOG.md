@@ -11,6 +11,9 @@
     - without enough room it stays below and the side buttons are hidden
     - a displayed transcription stays visible in fullscreen
 - [fix] changing the transcription language quickly displayed several transcriptions, a missing or invalid file now shows a message
+- [fix] the player waited for the first image of the video: 
+    - on Safari (and iOS) it only appeared after the first play
+    - an unknown or infinite duration (live stream) broke the controls
 - [fix] a video with only a transcription showed an empty captions menu
 - [fix] clicking a label in the captions or audio description settings could close the menu
 - [fix] the progress bar jumped back while being dragged during playback
