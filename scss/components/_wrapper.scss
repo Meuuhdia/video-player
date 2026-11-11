@@ -33,10 +33,10 @@
             .meuuhdia_controls {
                 position: fixed;
             }
-
-            .meuuhdia_caption_container {
-                bottom: 0;
-            }
+        }
+        
+        &:not([data-transcription="on"]) .meuuhdia_wrapper .meuuhdia_caption_container {
+            bottom: 0;
         }
 
         // ? the transcription is shown only if a language is chosen, below or on the right as chosen

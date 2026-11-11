@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1
+[fix] captions were hidden behind the controls in fullscreen when the transcription was displayed
+
 ## 1.2.0
 Recommended update: it fixes a memory issue present since 1.0.0 that could slow down the page during long viewing sessions.
 
