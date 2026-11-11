@@ -48,7 +48,7 @@ You can update Meuuhdia CSS variables to adapt the colors to your design.
 ## Usage
 Copy the following code where you want to display the video player. This is the minimum code required for Meuuhdia to work.
 - The "controls" attribute ensures control options are available if the native player is displayed (JavaScript disabled).
-- The `[preload='metadata']` attribute allows the Meuuhdia player to load the video
+- The `[preload='metadata']` attribute is recommended: it shows the video's duration and size as soon as the page loads, without downloading the video
 - At least one `<source>` tag must be provided
 
 ```html
@@ -106,7 +106,9 @@ To provide a text transcription of the video, the kind attribute must have the v
 
 The provided file must be a JSON file containing a list of key/value pairs to display the transcription as an ordered list (e.g., {"00:10 Clara": "Hi Toto!", "00:13 Toto": "Hey Clara, how are you?"})
 
-A proper transcription should allow understanding everything happening in the video from reading the text alone.
+A proper transcription should allow understanding everything happening in the video from reading the text alone. If the video has an audio description, include it in the transcription too: Meuuhdia Studio can do it automatically.
+
+Users can display the transcription below the video or on its right. On the right, the video shrinks to leave it room. Without enough room, the transcription stays below and the position buttons are hidden. A displayed transcription stays visible in fullscreen.
 
 Example:
 ```html
@@ -114,14 +116,31 @@ Example:
 ```
 
 ### Audio description
+Audio description describes what can be seen on screen for blind and visually impaired people. Meuuhdia offers two ways to provide it, which can be used together.
+
+#### Recorded audio described version
 If you have a version of the video with built-in audio description, add it with a `<source>` element carrying the `data-audiodescription` attribute, placed after the regular sources.
 
-The player then displays an "Audio description" button to switch between both versions while keeping the playback position and state. Both versions must have the same duration and timing so captions stay in sync.
+Users can switch between both versions while keeping the playback position and state. Both versions must have the same duration and timing so captions stay in sync.
 
 Example:
 ```html
 <source src="path/to/your/video.mp4" type="video/mp4">
 <source src="path/to/your/video-ad.mp4" type="video/mp4" data-audiodescription>
+```
+
+#### Spoken descriptions
+Without a recorded version, provide the descriptions in a VTT file, with the kind attribute "descriptions": the `.vtt` extension tells it apart from the JSON transcription.
+
+Each cue holds, as plain text, what can be seen, placed in a silence of the video. The player reads the descriptions with the browser's speech synthesis, or sends them to the user's screen reader. If a description is longer than its cue, the video pauses until it is finished (extended audio description).
+
+In the "Audio description" menu, users choose the language, the output (synthesized voice or screen reader), the speech rate and the automatic pause. Their settings are remembered. If the video also has a recorded version, it is offered first.
+
+When writing your descriptions, count about 15 characters per second of reading. Meuuhdia Studio checks this duration and flags descriptions that cover a dialogue.
+
+Example:
+```html
+<track kind="descriptions" src="path/to/your/descriptions.en.vtt" srclang="en" label="English" />
 ```
 
 ### Complete example
@@ -136,6 +155,8 @@ Example:
 
             <track kind="captions" src="assets/captions.fr.vtt" srclang="fr" label="Français" />
             <track kind="captions" src="assets/captions.it.vtt" srclang="it" label="Italiano" />
+
+            <track kind="descriptions" src="assets/descriptions.fr.vtt" srclang="fr" label="Français" />
 
             <track kind="descriptions" src="assets/transcript.fr.json" srclang="fr" label="français" />
             <track kind="descriptions" src="assets/transcript.it.json" srclang="it" label="italiano" />

@@ -48,7 +48,7 @@ Vous pouvez mettre à jour les variables CSS Meuuhdia pour adapter les couleurs 
 ## Utilisation
 Copiez le code suivant à l'endroit ou vous souhaitez afficher le lecteur vidéo, il s'agit du code minimal nécessaire au fonctionnement de Meuuhdia.
 - L'attribut "controls" permet de s'assurer d'avoir les options de contrôle disponibles dans le cas ou le lecteur natif serait affiché (javascript désactivé).
-- L'attribut `[preload='metadata']` permet au lecteur Meuuhdia de charger la vidéo
+- L'attribut `[preload='metadata']` est recommandé : il affiche la durée et la taille de la vidéo dès le chargement de la page, sans télécharger la vidéo
 - Au moins une balise `<source>` doit être renseignée
 
 ```html
@@ -106,7 +106,9 @@ Pour fournir une transcription textuelle de la video l'attribut kind doit avoir 
 
 Le fichier fourni doit être un fichier JSON contenant une liste de clé/valeur permettant d'afficher la transcription sous forme de liste ordonnée (ex: {"00:10 Clara": "Salut Toto !", "00:13 Toto": "Hey Clara, comment vas-tu ?"})
 
-Une transcription correcte doit permettre de comprendre tout ce qu'il se passe dans la vidéo uniquement à la lecture du texte.
+Une transcription correcte doit permettre de comprendre tout ce qu'il se passe dans la vidéo uniquement à la lecture du texte. Si la vidéo a une audiodescription, intégrez-la aussi à la transcription : Meuuhdia Studio peut le faire automatiquement.
+
+L'internaute peut afficher la transcription sous la vidéo ou à sa droite. À droite, la vidéo se réduit pour lui laisser la place. S'il n'y a pas assez de place, la transcription reste sous la vidéo et les boutons de position sont masqués. Une transcription affichée reste visible en plein écran.
 
 Exemple:
 ```html
@@ -114,14 +116,31 @@ Exemple:
 ```
 
 ### Audiodescription
+L'audiodescription décrit ce qui se voit à l'écran pour les personnes aveugles ou malvoyantes. Meuuhdia propose deux façons de la fournir, utilisables ensemble.
+
+#### Version audiodécrite enregistrée
 Si vous disposez d'une version de la vidéo intégrant l'audiodescription, ajoutez-la avec une balise `<source>` portant l'attribut `data-audiodescription`, placée après les sources classiques.
 
-Le lecteur affiche alors un bouton « Audiodescription » permettant de passer d'une version à l'autre en conservant la position et l'état de lecture. Les deux versions doivent avoir la même durée et le même minutage pour que les sous-titres restent synchronisés.
+L'internaute peut passer d'une version à l'autre en conservant la position et l'état de lecture. Les deux versions doivent avoir la même durée et le même minutage pour que les sous-titres restent synchronisés.
 
 Exemple:
 ```html
 <source src="path/to/your/video.mp4" type="video/mp4">
 <source src="path/to/your/video-ad.mp4" type="video/mp4" data-audiodescription>
+```
+
+#### Descriptions lues
+Sans version enregistrée, fournissez les descriptions dans un fichier VTT, avec l'attribut kind "descriptions" : c'est l'extension `.vtt` qui le distingue de la transcription en JSON.
+
+Chaque cue contient en texte simple ce qui se voit, placé dans un silence de la vidéo. Le lecteur lit les descriptions avec la synthèse vocale du navigateur, ou les transmet au lecteur d'écran de l'internaute. Si une description est plus longue que sa cue, la vidéo se met en pause le temps de la finir (audiodescription étendue).
+
+Dans le menu « Audiodescription », l'internaute choisit la langue, la restitution (voix de synthèse ou lecteur d'écran), le débit et la pause automatique. Ses réglages sont mémorisés. Si la vidéo a aussi une version enregistrée, elle est proposée en premier.
+
+Pour écrire vos descriptions, comptez environ 15 caractères par seconde de lecture. Meuuhdia Studio vérifie cette durée et signale les descriptions qui couvrent un dialogue.
+
+Exemple:
+```html
+<track kind="descriptions" src="path/to/your/descriptions.fr.vtt" srclang="fr" label="Français" />
 ```
 
 ### Exemple complet
@@ -136,6 +155,8 @@ Exemple:
 
             <track kind="captions" src="assets/captions.fr.vtt" srclang="fr" label="Français" />
             <track kind="captions" src="assets/captions.it.vtt" srclang="it" label="Italiano" />
+
+            <track kind="descriptions" src="assets/descriptions.fr.vtt" srclang="fr" label="Français" />
 
             <track kind="descriptions" src="assets/transcript.fr.json" srclang="fr" label="français" />
             <track kind="descriptions" src="assets/transcript.it.json" srclang="it" label="italiano" />
