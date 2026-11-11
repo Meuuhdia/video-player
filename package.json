@@ -1,6 +1,6 @@
 {
   "name": "@meuuhdia/video-player",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Accessible HTML5 video player with captions, subtitles, text transcript and audio description (recorded or spoken by speech synthesis). Built for WCAG, no dependencies.",
   "type": "module",
   "main": "meuuhdia.js",
