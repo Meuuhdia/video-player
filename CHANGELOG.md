@@ -1,30 +1,42 @@
 # Changelog
 
 ## 1.2.0
-- [feature] extended audio description: descriptions written in a WebVTT track (`<track kind="descriptions" src="*.vtt">`) read by the speech synthesis or sent to the screen reader (aria-live), with automatic pause until a description is finished and lowered video volume while speaking
-- [feature] audio description menu: 
+Recommended update: it fixes a memory issue present since 1.0.0 that could slow down the page during long viewing sessions.
+
+### Features
+- extended audio description: descriptions written in a WebVTT track (`<track kind="descriptions" src="*.vtt">`) read by the speech synthesis or sent to the screen reader (aria-live), with automatic pause until a description is finished and lowered video volume while speaking
+- audio description menu:
     - recorded version
     - spoken descriptions per language
     - output, speech rate and pause settings saved between visits
-- [feature] transcription on the right: 
+- transcription on the right:
     - the video shrinks to leave it room
     - without enough room it stays below and the side buttons are hidden
     - a displayed transcription stays visible in fullscreen
-- [fix] changing the transcription language quickly displayed several transcriptions, a missing or invalid file now shows a message
-- [fix] the player waited for the first image of the video: 
+
+### Fixes
+- event listeners piled up during playback and could slow down or crash the tab in long sessions (hidden controls took several seconds of mouse movement to come back)
+- the player waited for the first image of the video:
     - on Safari (and iOS) it only appeared after the first play
     - an unknown or infinite duration (live stream) broke the controls
-- [fix] several players on a page:
+- several players on a page:
     - fullscreen changed the state of all of them
     - caption settings labels pointed to the first player
-- [fix] a video with only a transcription showed an empty captions menu
-- [fix] clicking a label in the captions or audio description settings could close the menu
-- [fix] the progress bar jumped back while being dragged during playback
-- [fix] controls misaligned in fullscreen when the host site limits the width of list items
-- [fix] event listeners piled up during playback until the tab could crash (hidden controls took several seconds of mouse movement to come back)
-- [fix] progress bar thumb cut off on screens narrower than 401px
-- [fix] a displayed transcription added a large empty space at the bottom of the page
-- [fix] play/pause button label was always in French and did not follow pauses not made with the button
+- transcription:
+    - changing the language quickly displayed several transcriptions
+    - a missing or invalid file now shows a message
+    - a video with only a transcription showed an empty captions menu
+    - a displayed transcription added a large empty space at the bottom of the page
+- progress bar:
+    - it jumped back while being dragged during playback
+    - its thumb was cut off on screens narrower than 401px
+- screen readers announced the progress bar and the volume as raw numbers
+- the volume only changed when the slider was released
+- the play/pause button label was always in French and did not follow pauses not made with the button
+- controls were misaligned in fullscreen when the host site limits the width of list items
+- clicking a label in the captions or audio description settings could close the menu
+- a refused playback left an error in the console
+- the Space key on the video only worked in Firefox
 
 ## 1.1.0
 - [feature] audio description: alternative audio described video version (`<source data-audiodescription>`) with a toggle button keeping position and playback state

@@ -130,9 +130,13 @@ class MeuuhdiaControls {
         this.video.addEventListener("click", this.#actionPlayPause.bind(this));
         this.video.addEventListener("keyup", this.#checkKey.bind(this));
         mute.addEventListener("click", this.#actionMute.bind(this));
-        volume.addEventListener("change", (evt) => {
+        // ? the volume follows the slider while it moves, not only when it is released
+        let setVolume = (evt) => {
             this.video.volume = evt.currentTarget.value;
-        });
+            evt.currentTarget.setAttribute("aria-valuetext", Math.round(evt.currentTarget.value * 100) + "%");
+        };
+        volume.addEventListener("input", setVolume);
+        volume.addEventListener("change", setVolume);
         this.#timeProgress();
         
         if (!document?.fullscreenEnabled) fullscreen.style.display = "none";
@@ -159,14 +163,15 @@ class MeuuhdiaControls {
     }
 
     #checkKey(evt) {
-        if(evt.originalTarget == evt.currentTarget && "Space" == evt.code) {
+        if(evt.target === evt.currentTarget && "Space" == evt.code) {
             this.#actionPlayPause();
         }
     }
 
     #actionPlayPause() {
         if (this.video.paused || this.video.ended) {
-            this.video.play();
+            // playback refused (autoplay policy, interrupted loading): the icon shows the real state
+            this.video.play().catch(() => this.#setIconPlayPause());
             this.#toggleControls();
         } else {
             clearTimeout(this.controlsTimeout);
@@ -266,6 +271,8 @@ class MeuuhdiaControls {
         progress_bar.classList.add("meuuhdia_progress_bar", "meuuhdia_range_horizontal");
         progress_bar.setAttribute("value", 0);
         progress_bar.setAttribute("min", 0);
+        // ? screen readers announce a duration ("1 minute, 5 seconds") instead of a number of seconds
+        progress_bar.setAttribute("aria-valuetext", MeuuhdiaTime.convertSecondsToDuration(this.locale, 0).label);
 
         /**
          * ? Progress item list
@@ -305,6 +312,7 @@ class MeuuhdiaControls {
         volProgress.setAttribute("min", 0);
         volProgress.setAttribute("max", 1);
         volProgress.setAttribute("step", 0.1);
+        volProgress.setAttribute("aria-valuetext", "100%");
         volProgress.classList.add("meuuhdia_volume_bar", "meuuhdia_range_vertical");
 
         let volume = meuuhdiaDisclosure.createDisclosure("volume", "volume_high", this.locale.controls.volume, [volContentOff, volProgress], "100%");
@@ -374,14 +382,20 @@ class MeuuhdiaControls {
 
         // while the user drags the progress bar, playback must not move it back
         let dragging = false;
-        progress.addEventListener("input", () => dragging = true);
+        progress.addEventListener("input", () => {
+            dragging = true;
+            progress.setAttribute("aria-valuetext", MeuuhdiaTime.convertSecondsToDuration(this.locale, Number(progress.value)).label);
+        });
 
         this.video.addEventListener("timeupdate", () => {
             if (!progress.hasAttribute("max")) progress.setAttribute("max", this.video.duration);
 
             let duration_now = MeuuhdiaTime.convertSecondsToDuration(this.locale, this.video.currentTime);
             
-            if(!dragging) progress.value = this.video.currentTime;
+            if(!dragging) {
+                progress.value = this.video.currentTime;
+                progress.setAttribute("aria-valuetext", duration_now.label);
+            }
             progress_container.querySelector(".meuuhdia_timenow span[aria-hidden]").textContent = duration_now.text;
             progress_container.querySelector(".meuuhdia_timenow .sr-only").textContent = duration_now.label;
         });
